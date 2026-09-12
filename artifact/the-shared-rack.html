@@ -130,6 +130,7 @@ main{padding-block:32px 72px;}
 .tag-card::before{content:'';position:absolute; top:9px; left:50%; transform:translateX(-50%); width:9px;height:9px;border-radius:50%; background:var(--bg); border:1px solid var(--line);}
 .tag-card::after{content:'';position:absolute; top:15px; left:9%; right:9%; height:0; border-top:1px dashed var(--line);}
 .tag-photo{height:126px; margin:8px 10px 0; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:2.2rem; position:relative; overflow:hidden;}
+.tag-photo-img{width:100%; height:100%; object-fit:cover; display:block;}
 .tag-card.taken .tag-photo{filter:grayscale(0.85) brightness(0.62);}
 .tag-card.taken .tag-body{opacity:0.62;}
 .owner-chip{position:absolute; top:7px; left:7px; font-size:0.62rem; font-weight:700; color:#fff; padding:3px 8px; border-radius:999px; font-family:'Space Mono',monospace; letter-spacing:0.03em;}
@@ -436,21 +437,21 @@ const MEMBERS = [
 const memberById = (id) => MEMBERS.find(m => m.id === id) || null;
 
 const FALLBACK_ITEMS = [
-  { id:'item-1', ownerId:'maya', name:'Camel Trench Coat', category:'outerwear', size:'S', fabric:'Wool-Blend Gabardine', brand:'Sezane', laundry:'fresh', pool:true, claimedBy:'liam' },
-  { id:'item-2', ownerId:'maya', name:'Silk Slip Dress', category:'dress', size:'S', fabric:'Mulberry Silk', brand:'Reformation', laundry:'fresh', pool:true, claimedBy:null },
-  { id:'item-3', ownerId:'maya', name:'Cropped Cardigan', category:'top', size:'S', fabric:'Merino Wool', brand:'Aritzia', laundry:'hamper', pool:false, claimedBy:null },
-  { id:'item-4', ownerId:'maya', name:'White Oxford Shirt', category:'top', size:'S', fabric:'Egyptian Cotton', brand:'J.Crew', laundry:'fresh', pool:true, claimedBy:null },
-  { id:'item-5', ownerId:'maya', name:'Wide-Leg Trousers', category:'bottom', size:'S', fabric:'Tencel Twill', brand:'Mango', laundry:'fresh', pool:true, claimedBy:null },
-  { id:'item-6', ownerId:'liam', name:'Raw Denim Jacket', category:'outerwear', size:'L', fabric:'13.5oz Raw Denim', brand:"Levi's Vintage", laundry:'fresh', pool:true, claimedBy:null },
-  { id:'item-7', ownerId:'liam', name:'Merino Crewneck', category:'top', size:'L', fabric:'Merino Wool', brand:'Uniqlo', laundry:'fresh', pool:true, claimedBy:null },
-  { id:'item-8', ownerId:'liam', name:'Chino Trousers', category:'bottom', size:'L', fabric:'Cotton Twill', brand:'Banana Republic', laundry:'hamper', pool:false, claimedBy:null },
-  { id:'item-9', ownerId:'liam', name:'Suede Chelsea Boots', category:'shoes', size:'11', fabric:'Suede', brand:'Clarks', laundry:'fresh', pool:true, claimedBy:null },
-  { id:'item-10', ownerId:'liam', name:'Oxford Button-Down', category:'top', size:'L', fabric:'Egyptian Cotton', brand:'J.Crew', laundry:'fresh', pool:true, claimedBy:null },
-  { id:'item-11', ownerId:'sophie', name:'Leather Moto Jacket', category:'outerwear', size:'M', fabric:'Lambskin Leather', brand:'AllSaints', laundry:'fresh', pool:true, claimedBy:null },
-  { id:'item-12', ownerId:'sophie', name:'Pleated Midi Skirt', category:'bottom', size:'M', fabric:'Satin Polyester', brand:'Zara', laundry:'fresh', pool:true, claimedBy:null },
-  { id:'item-13', ownerId:'sophie', name:'Ribbed Tank Top', category:'top', size:'M', fabric:'Egyptian Cotton', brand:'Skims', laundry:'hamper', pool:true, claimedBy:null },
-  { id:'item-14', ownerId:'sophie', name:'Platform Boots', category:'shoes', size:'8', fabric:'Vegan Leather', brand:'Dr. Martens', laundry:'fresh', pool:false, claimedBy:null },
-  { id:'item-15', ownerId:'sophie', name:'Cashmere Wrap Coat', category:'outerwear', size:'M', fabric:'Cashmere', brand:'Mango', laundry:'fresh', pool:true, claimedBy:null },
+  { id:'item-1', ownerId:'maya', name:'Camel Trench Coat', category:'outerwear', size:'S', fabric:'Wool-Blend Gabardine', brand:'Sezane', laundry:'fresh', pool:true, claimedBy:'liam', image:'images/maya-camel-trench-coat.png' },
+  { id:'item-2', ownerId:'maya', name:'Silk Slip Dress', category:'dress', size:'S', fabric:'Mulberry Silk', brand:'Reformation', laundry:'fresh', pool:true, claimedBy:null, image:'images/maya-silk-slip-dress.png' },
+  { id:'item-3', ownerId:'maya', name:'Cropped Cardigan', category:'top', size:'S', fabric:'Merino Wool', brand:'Aritzia', laundry:'hamper', pool:false, claimedBy:null, image:'images/maya-cropped-cardigan.png' },
+  { id:'item-4', ownerId:'maya', name:'White Oxford Shirt', category:'top', size:'S', fabric:'Egyptian Cotton', brand:'J.Crew', laundry:'fresh', pool:true, claimedBy:null, image:'images/maya-white-oxford-shirt.png' },
+  { id:'item-5', ownerId:'maya', name:'Wide-Leg Trousers', category:'bottom', size:'S', fabric:'Tencel Twill', brand:'Mango', laundry:'fresh', pool:true, claimedBy:null, image:'images/maya-wide-leg-trousers.png' },
+  { id:'item-6', ownerId:'liam', name:'Raw Denim Jacket', category:'outerwear', size:'L', fabric:'13.5oz Raw Denim', brand:"Levi's Vintage", laundry:'fresh', pool:true, claimedBy:null, image:'images/liam-raw-denim-jacket.png' },
+  { id:'item-7', ownerId:'liam', name:'Merino Crewneck', category:'top', size:'L', fabric:'Merino Wool', brand:'Uniqlo', laundry:'fresh', pool:true, claimedBy:null, image:'images/liam-merino-crewneck.png' },
+  { id:'item-8', ownerId:'liam', name:'Chino Trousers', category:'bottom', size:'L', fabric:'Cotton Twill', brand:'Banana Republic', laundry:'hamper', pool:false, claimedBy:null, image:'images/liam-chino-trousers.png' },
+  { id:'item-9', ownerId:'liam', name:'Suede Chelsea Boots', category:'shoes', size:'11', fabric:'Suede', brand:'Clarks', laundry:'fresh', pool:true, claimedBy:null, image:'images/liam-suede-chelsea-boots.png' },
+  { id:'item-10', ownerId:'liam', name:'Oxford Button-Down', category:'top', size:'L', fabric:'Egyptian Cotton', brand:'J.Crew', laundry:'fresh', pool:true, claimedBy:null, image:'images/liam-oxford-button-down.png' },
+  { id:'item-11', ownerId:'sophie', name:'Leather Moto Jacket', category:'outerwear', size:'M', fabric:'Lambskin Leather', brand:'AllSaints', laundry:'fresh', pool:true, claimedBy:null, image:'images/sophie-leather-moto-jacket.png' },
+  { id:'item-12', ownerId:'sophie', name:'Pleated Midi Skirt', category:'bottom', size:'M', fabric:'Satin Polyester', brand:'Zara', laundry:'fresh', pool:true, claimedBy:null, image:'images/sophie-pleated-midi-skirt.png' },
+  { id:'item-13', ownerId:'sophie', name:'Ribbed Tank Top', category:'top', size:'M', fabric:'Egyptian Cotton', brand:'Skims', laundry:'hamper', pool:true, claimedBy:null, image:'images/sophie-ribbed-tank-top.png' },
+  { id:'item-14', ownerId:'sophie', name:'Platform Boots', category:'shoes', size:'8', fabric:'Vegan Leather', brand:'Dr. Martens', laundry:'fresh', pool:false, claimedBy:null, image:'images/sophie-platform-boots.png' },
+  { id:'item-15', ownerId:'sophie', name:'Cashmere Wrap Coat', category:'outerwear', size:'M', fabric:'Cashmere', brand:'Mango', laundry:'fresh', pool:true, claimedBy:null, image:'images/sophie-cashmere-wrap-coat.png' },
 ];
 
 const CATEGORY_EMOJI = { outerwear:'🧥', top:'👕', bottom:'👖', dress:'👗', shoes:'👞' };
@@ -601,8 +602,16 @@ function itemCard(item){
 
   const photo = document.createElement('div');
   photo.className = 'tag-photo';
-  photo.style.background = `linear-gradient(135deg, color-mix(in srgb, ${owner.color} 35%, transparent), color-mix(in srgb, ${owner.color} 12%, transparent))`;
-  photo.textContent = CATEGORY_EMOJI[item.category] || '🧦';
+  if (item.image) {
+    const img = document.createElement('img');
+    img.className = 'tag-photo-img';
+    img.src = item.image;
+    img.alt = item.name;
+    photo.appendChild(img);
+  } else {
+    photo.style.background = `linear-gradient(135deg, color-mix(in srgb, ${owner.color} 35%, transparent), color-mix(in srgb, ${owner.color} 12%, transparent))`;
+    photo.textContent = CATEGORY_EMOJI[item.category] || '🧦';
+  }
   div.appendChild(photo);
 
   const ownerTag = document.createElement('span');

@@ -30,8 +30,16 @@ function itemCard(item) {
 
   const photo = document.createElement('div');
   photo.className = 'item-photo';
-  photo.style.background = `linear-gradient(135deg, ${memberColor(item.ownerId)}55, ${memberColor(item.ownerId)}22)`;
-  photo.textContent = CATEGORY_EMOJI[item.category] || '🧦';
+  if (item.image) {
+    const img = document.createElement('img');
+    img.className = 'item-photo-img';
+    img.src = item.image;
+    img.alt = item.name;
+    photo.appendChild(img);
+  } else {
+    photo.style.background = `linear-gradient(135deg, ${memberColor(item.ownerId)}55, ${memberColor(item.ownerId)}22)`;
+    photo.textContent = CATEGORY_EMOJI[item.category] || '🧦';
+  }
 
   const ownerTag = document.createElement('span');
   ownerTag.className = 'owner-tag';

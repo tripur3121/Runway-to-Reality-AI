@@ -133,7 +133,9 @@ h2 { margin-top: 0; }
   align-items: center;
   justify-content: center;
   font-size: 2.4rem;
+  overflow: hidden;
 }
+.item-photo-img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 .item-card.taken .item-photo { filter: grayscale(0.9) brightness(0.65); }
 .item-card.taken .item-body { opacity: 0.65; }
