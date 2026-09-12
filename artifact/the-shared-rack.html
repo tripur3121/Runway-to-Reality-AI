@@ -44,12 +44,7 @@ button{font-family:inherit;}
   padding-block:20px; border-bottom:1px solid var(--line); flex-wrap:wrap;
 }
 .mast-left{display:flex; align-items:center; gap:14px;}
-.mark{
-  width:40px;height:50px; background:var(--surface); border:1px solid var(--line); border-radius:3px 3px 9px 9px;
-  position:relative; box-shadow:var(--shadow); flex-shrink:0;
-}
-.mark::before{content:'';position:absolute; top:7px; left:50%; transform:translateX(-50%); width:7px;height:7px;border-radius:50%; background:var(--bg); border:1px solid var(--line);}
-.mark::after{content:'';position:absolute; top:19px; left:5px; right:5px; height:2px; background:linear-gradient(90deg,var(--maya),var(--liam) 50%,var(--sophie));}
+.logo-mark{display:block; flex-shrink:0; filter:drop-shadow(0 1px 2px rgba(20,20,20,0.18));}
 h1{font-size:1.28rem; font-weight:700; letter-spacing:-0.01em;}
 .eyebrow{font-family:'Space Mono',monospace; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); margin:0 0 2px;}
 .mast-right{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
@@ -231,7 +226,21 @@ main{padding-block:32px 72px;}
 
 <header class="masthead">
   <div class="mast-left">
-    <div class="mark" aria-hidden="true"></div>
+    <svg class="logo-mark" width="34" height="42" viewBox="0 0 48 60" role="img" aria-label="DripShare logo">
+      <defs>
+        <linearGradient id="dripStripe" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="var(--maya)"/>
+          <stop offset="50%" stop-color="var(--liam)"/>
+          <stop offset="100%" stop-color="var(--sophie)"/>
+        </linearGradient>
+        <clipPath id="dripClip">
+          <path d="M24 3 C10 21 4 33 4 42 C4 53 13 59 24 59 C35 59 44 53 44 42 C44 33 38 21 24 3 Z"/>
+        </clipPath>
+      </defs>
+      <path d="M24 3 C10 21 4 33 4 42 C4 53 13 59 24 59 C35 59 44 53 44 42 C44 33 38 21 24 3 Z" fill="var(--accent)"/>
+      <rect x="0" y="45" width="48" height="8" fill="url(#dripStripe)" clip-path="url(#dripClip)"/>
+      <circle cx="24" cy="25" r="4" fill="var(--bg)"/>
+    </svg>
     <div>
       <p class="eyebrow">Maya · Liam · Sophie</p>
       <h1>DripShare</h1>
