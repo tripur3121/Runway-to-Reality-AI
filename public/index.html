@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Runway to Reality AI</title>
+<link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">RR</span>
+    <div>
+      <h1>Runway to Reality AI</h1>
+      <p class="tagline">Your low-effort, high-fashion closet — planned a day ahead.</p>
+    </div>
+  </div>
+  <button id="fitting-room-btn" class="btn btn-accent">🎥 Fitting Room Call</button>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button class="tab active" data-tab="closet">Shared Closet</button>
+  <button class="tab" data-tab="lookbook">Plan Tomorrow's Fit</button>
+  <button class="tab" data-tab="squadsync">Squad Sync</button>
+  <button class="tab" data-tab="roulette">Swap Roulette</button>
+  <button class="tab" data-tab="inspo">Influencer Inspo</button>
+  <button class="tab" data-tab="agents">AI Agents</button>
+</nav>
+
+<main id="views">
+
+  <section id="view-closet" class="view active">
+    <div class="closet-controls">
+      <div class="member-filter" id="member-filter">
+        <button class="chip active" data-member="all">All Group Pool</button>
+        <button class="chip" data-member="maya">Maya's</button>
+        <button class="chip" data-member="liam">Liam's</button>
+        <button class="chip" data-member="sophie">Sophie's</button>
+      </div>
+    </div>
+    <div id="closet-grid" class="closet-grid"></div>
+  </section>
+
+  <section id="view-lookbook" class="view">
+    <div class="lookbook-header">
+      <div>
+        <h2>Plan Tomorrow's Fit</h2>
+        <p class="muted">One tap. Gemini curates an outfit from the shared pool so you don't have to think about it tonight.</p>
+      </div>
+      <button id="curate-btn" class="btn btn-primary">✨ Curate My Outfit</button>
+    </div>
+    <div id="lookbook-empty" class="empty-state">No outfit curated yet — tap "Curate My Outfit" to get started.</div>
+    <div id="lookbook-content" class="lookbook-content hidden">
+      <div id="outfit-pieces" class="outfit-pieces"></div>
+      <div class="runway-panel">
+        <div class="runway-perspective-switch" id="perspective-switch">
+          <button class="chip active" data-member="maya">Maya · 5'5" S</button>
+          <button class="chip" data-member="liam">Liam · 6'1" L</button>
+          <button class="chip" data-member="sophie">Sophie · 5'8" M</button>
+        </div>
+        <button id="watch-video-btn" class="btn btn-secondary">▶ Watch AI Video Runway</button>
+        <div id="runway-stage" class="runway-stage hidden">
+          <div class="runway-floor"></div>
+          <div id="runway-figure" class="runway-figure"></div>
+        </div>
+        <p id="styling-tip" class="styling-tip"></p>
+        <details class="veo-export">
+          <summary>Exportable 4K Veo prompt</summary>
+          <textarea id="veo-prompt" readonly></textarea>
+          <button id="copy-veo-btn" class="btn btn-ghost">Copy prompt</button>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-squadsync" class="view">
+    <h2>Squad Sync</h2>
+    <p class="muted">Name the event — Gemini assigns Maya, Liam &amp; Sophie complementary color roles so the group photo looks coordinated, not matchy.</p>
+    <form id="squadsync-form" class="inline-form">
+      <input id="squadsync-event" type="text" placeholder="Saturday Rooftop Sunset" />
+      <button type="submit" class="btn btn-primary">Sync the Squad</button>
+    </form>
+    <div id="squadsync-result" class="squadsync-result"></div>
+  </section>
+
+  <section id="view-roulette" class="view">
+    <h2>Closet Swap Roulette</h2>
+    <p class="muted">Spin the wheel to pull one fusion dare-piece from each sibling's closet.</p>
+    <button id="spin-btn" class="btn btn-primary spin-btn">🎡 Spin the Wheel</button>
+    <div id="roulette-result" class="roulette-result"></div>
+  </section>
+
+  <section id="view-inspo" class="view">
+    <h2>Influencer Inspo</h2>
+    <p class="muted">Add a favorite stylist's handle — the Inspo Agent pulls their posts from the last 3 months only.</p>
+    <form id="inspo-form" class="inline-form">
+      <input id="inspo-handle" type="text" placeholder="@favorite.stylist" />
+      <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+    <div id="inspo-handles" class="chip-row"></div>
+    <div id="inspo-grid" class="inspo-grid"></div>
+  </section>
+
+  <section id="view-agents" class="view">
+    <h2>Meet the Agents</h2>
+    <p class="muted">Runway to Reality AI is powered by a small squad of single-purpose agents, each an expert at one job.</p>
+    <div id="agents-grid" class="agents-grid"></div>
+  </section>
+
+</main>
+
+<div id="nudge-modal" class="modal hidden">
+  <div class="modal-card">
+    <button class="modal-close" data-close="nudge-modal">&times;</button>
+    <h3>Nudge drafted ✍️</h3>
+    <p id="nudge-text" class="nudge-text"></p>
+    <p class="muted small" id="nudge-source"></p>
+    <button class="btn btn-primary" data-close="nudge-modal">Nice, close this</button>
+  </div>
+</div>
+
+<div id="fitting-room-modal" class="modal hidden">
+  <div class="modal-card modal-wide">
+    <button class="modal-close" data-close="fitting-room-modal">&times;</button>
+    <h3>Fitting Room Call</h3>
+    <p class="muted small">Open this app in a second tab and join to connect peer-to-peer.</p>
+    <div class="call-videos">
+      <div class="video-wrap">
+        <video id="local-video" autoplay playsinline muted></video>
+        <span class="video-label">You</span>
+      </div>
+      <div class="video-wrap">
+        <video id="remote-video" autoplay playsinline></video>
+        <span class="video-label" id="remote-label">Waiting for a second tab…</span>
+      </div>
+    </div>
+    <div class="call-controls">
+      <button id="join-call-btn" class="btn btn-primary">Join Call</button>
+      <button id="mute-btn" class="btn btn-ghost" disabled>Mute</button>
+      <button id="cam-btn" class="btn btn-ghost" disabled>Camera Off</button>
+      <button id="leave-call-btn" class="btn btn-danger" disabled>Leave</button>
+    </div>
+    <div class="voting-panel">
+      <div class="reaction-row">
+        <button class="reaction-btn" data-reaction="fire">🔥 Fire</button>
+        <button class="reaction-btn" data-reaction="slay">💅 Slay</button>
+        <button class="reaction-btn" data-reaction="swap">👟 Swap Shoes</button>
+        <button class="reaction-btn" data-reaction="pass">🙅 Hard Pass</button>
+      </div>
+      <div class="gauge">
+        <div class="gauge-fill" id="gauge-fill"></div>
+        <span class="gauge-label" id="gauge-label">50</span>
+      </div>
+      <span class="muted small">Live group approval score</span>
+    </div>
+    <div id="emoji-burst-layer"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script type="module" src="/app.js"></script>
+</body>
+</html>
