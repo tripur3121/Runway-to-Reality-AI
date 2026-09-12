@@ -21,6 +21,7 @@
 <nav class="tabs" id="tabs">
   <button class="tab active" data-tab="closet">Shared Closet</button>
   <button class="tab" data-tab="lookbook">Plan Tomorrow's Fit</button>
+  <button class="tab" data-tab="outfitfinder">Outfit Finder</button>
   <button class="tab" data-tab="squadsync">Squad Sync</button>
   <button class="tab" data-tab="roulette">Swap Roulette</button>
   <button class="tab" data-tab="inspo">Influencer Inspo</button>
@@ -74,6 +75,30 @@
         </details>
       </div>
     </div>
+  </section>
+
+  <section id="view-outfitfinder" class="view">
+    <h2>Outfit Finder</h2>
+    <p class="muted">Drop in a fashion video or reel — the Outfit Finder Agent watches it, lists every piece it sees, and matches each one to something already in the shared closet.</p>
+
+    <div class="outfit-source-tabs" id="outfit-source-tabs">
+      <button class="chip active" data-source="upload">Upload a video</button>
+      <button class="chip" data-source="url">Paste a URL</button>
+    </div>
+
+    <div id="outfit-upload-panel" class="outfit-source-panel">
+      <input id="outfit-file-input" type="file" accept="video/*" />
+      <p class="muted small">Up to ~90MB. Any browser-playable video file.</p>
+    </div>
+    <div id="outfit-url-panel" class="outfit-source-panel hidden">
+      <input id="outfit-url-input" type="text" placeholder="https://youtube.com/watch?v=… or a direct .mp4 link" />
+      <p class="muted small">YouTube links and direct video file links work. Instagram/TikTok Reel page links don't — those aren't direct video files.</p>
+    </div>
+
+    <button id="analyze-outfit-btn" class="btn btn-primary">🔎 Analyze Video</button>
+    <p id="outfit-status" class="muted small hidden"></p>
+
+    <div id="outfit-results" class="outfit-results"></div>
   </section>
 
   <section id="view-squadsync" class="view">

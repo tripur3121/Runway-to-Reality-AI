@@ -20,6 +20,7 @@ export const api = {
   nudge: (itemId) => req('POST', '/api/nudge', { itemId }),
   curateLookbook: () => req('POST', '/api/lookbook/curate', {}),
   generateVideo: (prompt) => req('POST', '/api/lookbook/video', { prompt }),
+  analyzeOutfitVideo: (payload) => req('POST', '/api/outfit-finder/analyze', payload),
   squadSync: (event) => req('POST', '/api/squadsync', { event }),
   spinRoulette: () => req('POST', '/api/roulette/spin', {}),
   vote: (reaction) => req('POST', '/api/vote', { reaction }),

@@ -1,6 +1,7 @@
 import { api, subscribeEvents } from './modules/api.js';
 import { initCloset, setClosetState, updateItem } from './modules/closet.js';
 import { initLookbook, applyLookbookResult } from './modules/lookbook.js';
+import { initOutfitFinder } from './modules/outfitFinder.js';
 import { initSquadSync } from './modules/squadsync.js';
 import { initRoulette } from './modules/roulette.js';
 import { initInspo } from './modules/inspo.js';
@@ -49,6 +50,7 @@ async function boot() {
   initModals();
   initCloset({ onNudge: nudgeItem });
   initLookbook();
+  initOutfitFinder();
   initSquadSync();
   initRoulette();
   initInspo();

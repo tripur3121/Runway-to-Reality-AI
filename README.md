@@ -22,6 +22,8 @@ Optional environment variables (create a `.env`-style export before `npm start`,
 - `INSTAGRAM_ACCESS_TOKEN` and `INSTAGRAM_BUSINESS_ID` — when both are set, Influencer Inspo pulls real posts via Instagram's [Business Discovery API](https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/business-discovery-api) instead of mock data. `INSTAGRAM_BUSINESS_ID` is the id of *your own* linked Instagram Business/Creator account (from a Meta developer app); `INSTAGRAM_ACCESS_TOKEN` is a long-lived token for that account with `instagram_business_basic`. The handle you look up must also be a public Business/Creator account — personal accounts aren't discoverable this way.
 - `PORT` — defaults to `8787`.
 
+Outfit Finder reuses `GEMINI_API_KEY` — no extra variable needed, but the key must have access to Gemini's video-understanding and Files API (standard on most keys; not the separate Veo/billing gate the video-generation button needs).
+
 ## Feature tour
 
 1. **Shared Closet with Detailed Specs** — filter by Maya's / Liam's / Sophie's / All Group Pool. Every piece carries Size, Fabric, and Brand. One tap flips Laundry Status between Fresh and In Hamper. Maya's Camel Trench Coat is pre-claimed by Liam on load, exactly to demonstrate #2 below.
@@ -29,8 +31,9 @@ Optional environment variables (create a `.env`-style export before `npm start`,
 3. **"Same Fit, Different Member" AI Video Lookbook** — "Curate My Outfit" pulls a complementary set from the pool. "Watch AI Video Runway" plays an animated motion-runway simulation (CSS/SVG) that rescales per member height (Maya 5'5" S, Liam 6'1" L, Sophie 5'8" M) with tailored micro-styling tips per perspective, plus an exportable cinematic 4K prompt — and a "Generate real video (Veo)" button that actually renders it with Google's Veo model when `GEMINI_API_KEY` has video access (see below).
 4. **Live WebRTC Video & Audio Fitting Room** — the top-right "Fitting Room Call" button opens a native, browser-only peer-to-peer video call (no external call service). Open a second tab and join to connect both feeds. Fit Check reactions (🔥 Fire / 💅 Slay / 👟 Swap Shoes / 🙅 Hard Pass) burst floating emoji across every connected tab and move a shared live approval gauge.
 5. **Squad Sync & Closet Swap Roulette** — name an event and the Squad Sync Agent assigns Maya, Liam & Sophie complementary color roles from one palette. Swap Roulette spins one fusion "dare" piece per sibling from someone else's closet.
-6. **Multi-agent architecture** — see **AI Agents** in the app, or `server/agents/`. Each agent owns exactly one job: `nudgeAgent`, `lookbookAgent`, `squadSyncAgent`, `rouletteAgent`, `votingAgent`, `influencerAgent`. `orchestrator.js` is the roster/registry every route reads from.
+6. **Multi-agent architecture** — see **AI Agents** in the app, or `server/agents/`. Each agent owns exactly one job: `nudgeAgent`, `lookbookAgent`, `squadSyncAgent`, `rouletteAgent`, `votingAgent`, `influencerAgent`, `outfitFinderAgent`. `orchestrator.js` is the roster/registry every route reads from.
 7. **Influencer Inspo** — add a favorite stylist's handle and the Influencer Inspo Agent returns only their posts from the last 3 months, with style tags to pull ideas from. See below for how to make this live.
+8. **Outfit Finder** — upload a fashion video, or paste a YouTube link or a direct video file URL, and the Outfit Finder Agent has Gemini watch it, list every clothing item and accessory it sees, and match each one against the real shared closet inventory with a similarity %, the owning roommate, live availability, and a Borrow button. Items with no close match still get up to two "similar alternatives" instead of coming back empty. Requires `GEMINI_API_KEY` — there's no sensible offline fallback for "watch a video," so without a key the tab explains that clearly instead of faking results.
 
 ## Architecture
 
@@ -46,11 +49,12 @@ server/
     rouletteAgent.js     one fusion pick per member
     votingAgent.js       Fit Check tally -> 0-100 gauge score
     influencerAgent.js   pluggable inspo source, filters to last 3 months
+    outfitFinderAgent.js video-in-closet-out: upload/URL -> Gemini video analysis -> closet matches
     orchestrator.js       agent roster surfaced to the UI
 
 public/
   index.html, styles.css, app.js
-  modules/            one file per feature area (closet, lookbook, fitroom, squadsync, roulette, inspo, agents, api, toast)
+  modules/            one file per feature area (closet, lookbook, outfitFinder, fitroom, squadsync, roulette, inspo, agents, api, toast)
 ```
 
 State sync is push-based: every mutating route broadcasts a typed event over a single `/api/events` SSE stream, and every open tab (including the WebRTC signaling itself) reacts to it. This is what makes the grey-out banners, the vote gauge, and the call handshake update live across two browser tabs without a page refresh.
@@ -65,16 +69,20 @@ This environment's `npm install` is blocked by organization egress policy (the n
 - **The "Watch AI Video Runway" animation is a CSS motion simulation**, always available with no setup. Right next to it, **"Generate real video (Veo)" calls the actual Gemini API's Veo video-generation endpoint** (`geminiClient.generateVideo`) when `GEMINI_API_KEY` is set: it submits the same cinematic prompt as a long-running job, polls until it finishes (up to ~6 minutes), downloads the resulting MP4, and plays it in the page. This integration is **unverified against a live key** — this environment has none to test with — so if Google has changed the request/response shape since this was written, check [ai.google.dev/gemini-api/docs/video](https://ai.google.dev/gemini-api/docs/video) and adjust `geminiClient.js`. Errors (missing key, no Veo access, timeout) surface directly in the UI rather than failing silently.
 - **Influencer posts are real when `INSTAGRAM_ACCESS_TOKEN` + `INSTAGRAM_BUSINESS_ID` are set** — `influencerAgent.fetchFromProvider()` calls Instagram's Business Discovery API and maps real captions, timestamps, like counts, and post images into the UI. Without those two variables it falls back to deterministic mock data (same 3-month filter either way), so the feature is always demoable.
 - **Gemini text generation is real when `GEMINI_API_KEY` is set**, and degrades to hand-written templates otherwise — every agent was designed to be fully demoable without any key.
+- **Outfit Finder is real (video upload/URL → Gemini video understanding → closet matching) whenever `GEMINI_API_KEY` is set**, with no offline fallback — there's no honest way to fake "the AI watched your video," so it surfaces a clear "needs `GEMINI_API_KEY`" message instead of showing invented results. Like the Veo integration, this is unverified against a live key (none available here); the Files-API upload and video-understanding request shapes follow Google's published docs at the time of writing.
 
 ## Testing performed
 
-- Full backend route smoke test via `curl` (claim/release/laundry, nudge, lookbook curate, squad sync, roulette, vote, influencer add + inspo).
-- End-to-end Playwright run across two browser contexts with fake camera/mic devices: closet load + pre-claimed banner, claim + nudge flow, lookbook curate + perspective switch + Veo prompt export, squad sync, roulette, influencer inspo, agents roster, and a real two-tab WebRTC connection with live cross-tab voting/gauge/emoji sync — zero console errors.
+- Full backend route smoke test via `curl` (claim/release/laundry, nudge, lookbook curate, squad sync, roulette, vote, influencer add + inspo, outfit-finder analyze error path).
+- End-to-end Playwright run across two browser contexts with fake camera/mic devices: closet load + pre-claimed banner, claim + nudge flow, lookbook curate + perspective switch + Veo prompt export, squad sync, roulette, influencer inspo, agents roster (now 7), Outfit Finder's upload/URL toggle and error states, and a real two-tab WebRTC connection with live cross-tab voting/gauge/emoji sync — zero console errors.
+- Outfit Finder's results rendering and Borrow flow were verified by intercepting the analyze request with a canned response (no real key available) — detected-item cards, best-match/alternative rows, and claiming an item via the Borrow button all confirmed working.
+- The loose-JSON-extraction helper Gemini's replies are parsed with (raw JSON / fenced JSON / JSON embedded in prose) was unit-checked against all three shapes.
 
 ## Next steps if you want to go further
 
 - Swap the in-memory store for a real database (closet items and votes currently reset on server restart).
 - Add authentication so "claim as…" isn't a free-for-all dropdown.
-- Verify the Veo integration against a real, Veo-enabled `GEMINI_API_KEY` and adjust `geminiClient.generateVideo()` if Google's request/response shape has moved on.
+- Verify the Veo and Outfit Finder integrations against a real `GEMINI_API_KEY` (the latter also needs Files API + video-understanding access; Veo specifically needs separate billing) and adjust `geminiClient.js` if Google's request/response shapes have moved on.
 - The Instagram Business Discovery integration needs a Meta developer app review for production use beyond your own test accounts — see Meta's app review docs before shipping this to real users.
 - `public/generated/` accumulates one MP4 per Veo request with no cleanup — add expiry/pruning before running this for real.
+- Outfit Finder only handles direct video files and YouTube links — Instagram/TikTok Reel *page* URLs aren't fetchable this way (they're HTML, not a video file) and would need each platform's own API.

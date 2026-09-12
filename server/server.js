@@ -13,6 +13,7 @@ import { castVote, getScore, resetVotes } from './agents/votingAgent.js';
 import { getInspo } from './agents/influencerAgent.js';
 import { ROSTER } from './agents/orchestrator.js';
 import { generateVideo } from './agents/geminiClient.js';
+import { findOutfitFromVideo } from './agents/outfitFinderAgent.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
@@ -53,17 +54,22 @@ function sendJson(res, status, data) {
   res.end(body);
 }
 
-function readBody(req) {
+function readBody(req, maxBytes = 1_000_000) {
   return new Promise((resolve) => {
-    let raw = '';
+    const chunks = [];
+    let total = 0;
     req.on('data', (chunk) => {
-      raw += chunk;
-      if (raw.length > 1_000_000) req.destroy();
+      total += chunk.length;
+      if (total > maxBytes) {
+        req.destroy();
+        return;
+      }
+      chunks.push(chunk);
     });
     req.on('end', () => {
-      if (!raw) return resolve({});
+      if (!chunks.length) return resolve({});
       try {
-        resolve(JSON.parse(raw));
+        resolve(JSON.parse(Buffer.concat(chunks).toString('utf8')));
       } catch {
         resolve({});
       }
@@ -188,6 +194,16 @@ async function handleApi(req, res, pathname, query) {
       await fsp.mkdir(dir, { recursive: true });
       await fsp.writeFile(path.join(dir, filename), buffer);
       return sendJson(res, 200, { videoUrl: `/generated/${filename}` });
+    } catch (e) {
+      return sendJson(res, 502, { error: e.message });
+    }
+  }
+
+  if (pathname === '/api/outfit-finder/analyze' && req.method === 'POST') {
+    const body = await readBody(req, 90_000_000);
+    try {
+      const items = await findOutfitFromVideo(body);
+      return sendJson(res, 200, { items });
     } catch (e) {
       return sendJson(res, 502, { error: e.message });
     }
