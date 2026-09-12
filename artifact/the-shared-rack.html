@@ -1,0 +1,936 @@
+<title>The Shared Rack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --bg:#F2EEE3; --surface:#FBF9F3; --surface-2:#EFEADD; --ink:#221E19; --ink-soft:#786F62;
+  --line:#DBD3C2; --accent:#2F6F5E; --accent-soft:#DEEAE4; --accent-ink:#F5FBF8;
+  --stamp:#B23A2E; --fresh:#3E7D3A; --hamper:#AD7A0C;
+  --maya:#B5647A; --liam:#3E6E8E; --sophie:#B9812C;
+  --shadow:0 1px 2px rgba(34,30,25,0.06),0 6px 16px rgba(34,30,25,0.06);
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#171310; --surface:#221D18; --surface-2:#2A231D; --ink:#F1EBDF; --ink-soft:#B3A79A;
+    --line:#3C342A; --accent:#54AC93; --accent-soft:rgba(84,172,147,0.16); --accent-ink:#0E1A16;
+    --stamp:#E2685A; --fresh:#7BC66E; --hamper:#E0AC4B;
+    --maya:#DE8AA4; --liam:#7FB1D6; --sophie:#DDA857;
+    --shadow:0 1px 2px rgba(0,0,0,0.3),0 10px 24px rgba(0,0,0,0.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#171310; --surface:#221D18; --surface-2:#2A231D; --ink:#F1EBDF; --ink-soft:#B3A79A;
+  --line:#3C342A; --accent:#54AC93; --accent-soft:rgba(84,172,147,0.16); --accent-ink:#0E1A16;
+  --stamp:#E2685A; --fresh:#7BC66E; --hamper:#E0AC4B;
+  --maya:#DE8AA4; --liam:#7FB1D6; --sophie:#DDA857;
+  --shadow:0 1px 2px rgba(0,0,0,0.3),0 10px 24px rgba(0,0,0,0.35);
+}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'Archivo',system-ui,-apple-system,sans-serif;
+  padding-inline:max(16px,calc((100vw - 1040px)/2));
+}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif; text-wrap:balance; margin:0;}
+.mono{font-family:'Space Mono',ui-monospace,monospace;}
+a{color:inherit;}
+button{font-family:inherit;}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+@media (prefers-reduced-motion:reduce){ *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;} }
+
+.masthead{
+  display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
+  padding-block:24px 16px; border-bottom:1px solid var(--line); flex-wrap:wrap;
+}
+.mast-left{display:flex; align-items:center; gap:14px;}
+.mark{
+  width:46px;height:58px; background:var(--surface); border:1px solid var(--line); border-radius:3px 3px 9px 9px;
+  position:relative; box-shadow:var(--shadow); flex-shrink:0;
+}
+.mark::before{content:'';position:absolute; top:8px; left:50%; transform:translateX(-50%); width:8px;height:8px;border-radius:50%; background:var(--bg); border:1px solid var(--line);}
+.mark::after{content:'';position:absolute; top:22px; left:6px; right:6px; height:2px; background:linear-gradient(90deg,var(--maya),var(--liam) 50%,var(--sophie));}
+h1{font-size:1.5rem; font-weight:700; letter-spacing:-0.01em;}
+.eyebrow{font-family:'Space Mono',monospace; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); margin:0 0 2px;}
+.tagline{margin:3px 0 0; color:var(--ink-soft); font-size:0.88rem; max-width:46ch;}
+.mast-right{display:flex; flex-direction:column; align-items:flex-end; gap:10px;}
+.presence-pill{
+  font-family:'Space Mono',monospace; font-size:0.72rem; color:var(--ink-soft);
+  display:flex; align-items:center; gap:6px;
+}
+.presence-dot{width:7px;height:7px;border-radius:50%; background:var(--fresh); box-shadow:0 0 0 3px var(--accent-soft);}
+.btn{
+  border:1px solid transparent; border-radius:999px; padding:10px 18px; font-size:0.86rem; font-weight:600;
+  cursor:pointer; transition:transform .12s ease; font-family:'Archivo',sans-serif;
+}
+.btn:hover{transform:translateY(-1px);}
+.btn:disabled{opacity:0.45; cursor:not-allowed; transform:none;}
+.btn-accent{background:var(--accent); color:var(--accent-ink);}
+.btn-ghost{background:var(--surface-2); color:var(--ink); border-color:var(--line);}
+.btn-outline{background:transparent; color:var(--ink); border-color:var(--line);}
+.btn-danger{background:var(--stamp); color:#fff;}
+.btn-sm{padding:6px 12px; font-size:0.76rem;}
+
+.identity-row{display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding-block:12px; border-bottom:1px solid var(--line);}
+.identity-label{font-family:'Space Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-soft); margin-right:2px;}
+.id-chip{
+  border:1px solid var(--line); background:var(--surface); border-radius:999px; padding:6px 14px 6px 10px;
+  cursor:pointer; font-weight:600; font-size:0.82rem; display:flex; align-items:center; gap:6px;
+}
+.id-chip .dot{width:9px;height:9px;border-radius:50%;}
+.id-chip.active{border-color:var(--accent); background:var(--accent-soft);}
+
+.punch-tabs{display:flex; gap:4px; padding-block:12px; overflow-x:auto; border-bottom:1px solid var(--line);}
+.punch-tab{
+  border:none; background:transparent; padding:8px 14px; border-radius:6px; font-weight:600; font-size:0.86rem;
+  color:var(--ink-soft); cursor:pointer; white-space:nowrap; position:relative;
+}
+.punch-tab.active{color:var(--ink);}
+.punch-tab.active::after{content:'';position:absolute; left:12px; right:12px; bottom:-13px; height:3px; background:var(--accent); border-radius:2px;}
+
+main{padding-block:28px 72px;}
+.view{display:none;}
+.view.active{display:block; animation:fade .2s ease;}
+@keyframes fade{from{opacity:0; transform:translateY(3px);} to{opacity:1;}}
+
+.section-head{margin-bottom:18px; display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap;}
+.section-head h2{font-size:1.5rem;}
+.section-head p{margin:6px 0 0; color:var(--ink-soft); max-width:56ch; font-size:0.92rem;}
+
+.filter-row{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px;}
+.chip{border:1px solid var(--line); background:var(--surface); padding:7px 15px; border-radius:999px; cursor:pointer; font-weight:600; font-size:0.82rem;}
+.chip.active{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+
+.rack{display:grid; grid-template-columns:repeat(auto-fill,minmax(216px,1fr)); gap:18px;}
+.tag-card{
+  position:relative; background:var(--surface); border:1px solid var(--line); border-radius:4px 4px 12px 12px;
+  padding-top:22px; box-shadow:var(--shadow); display:flex; flex-direction:column;
+}
+.tag-card::before{content:'';position:absolute; top:9px; left:50%; transform:translateX(-50%); width:9px;height:9px;border-radius:50%; background:var(--bg); border:1px solid var(--line);}
+.tag-card::after{content:'';position:absolute; top:15px; left:9%; right:9%; height:0; border-top:1px dashed var(--line);}
+.tag-photo{height:126px; margin:8px 10px 0; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:2.2rem; position:relative; overflow:hidden;}
+.tag-card.taken .tag-photo{filter:grayscale(0.85) brightness(0.62);}
+.tag-card.taken .tag-body{opacity:0.62;}
+.owner-chip{position:absolute; top:7px; left:7px; font-size:0.62rem; font-weight:700; color:#fff; padding:3px 8px; border-radius:999px; font-family:'Space Mono',monospace; letter-spacing:0.03em;}
+.laundry-pill{
+  position:absolute; top:7px; right:7px; font-size:0.62rem; font-weight:700; padding:4px 9px; border-radius:999px; border:none; cursor:pointer;
+  font-family:'Space Mono',monospace;
+}
+.laundry-pill.fresh{background:rgba(62,125,58,0.16); color:var(--fresh);}
+.laundry-pill.hamper{background:rgba(173,122,12,0.18); color:var(--hamper);}
+.stamp{
+  position:absolute; bottom:10px; left:10%; right:10%; text-align:center; color:var(--stamp); border:2.5px solid var(--stamp);
+  border-radius:5px; padding:4px 4px; font-family:'Space Mono',monospace; font-weight:700; font-size:0.68rem;
+  text-transform:uppercase; letter-spacing:0.06em; transform:rotate(-6deg); background:color-mix(in srgb, var(--stamp) 8%, transparent);
+}
+.tag-body{padding:12px 14px 14px; display:flex; flex-direction:column; gap:5px; flex:1;}
+.tag-body h4{margin:0; font-size:0.94rem; font-family:'Archivo',sans-serif; font-weight:700;}
+.spec-line{font-family:'Space Mono',monospace; font-size:0.7rem; color:var(--ink-soft);}
+.tag-actions{margin-top:auto; padding-top:10px; display:flex; gap:6px; flex-wrap:wrap;}
+.tag-actions .btn{flex:1;}
+
+.empty-state{border:1px dashed var(--line); border-radius:12px; padding:40px 20px; text-align:center; color:var(--ink-soft);}
+.hidden{display:none !important;}
+
+.curate-row{display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:20px;}
+.lookbook-grid{display:grid; grid-template-columns:1fr 1.15fr; gap:22px;}
+@media (max-width:820px){.lookbook-grid{grid-template-columns:1fr;}}
+.piece-row{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:11px 13px; display:flex; gap:10px; align-items:center; margin-bottom:9px; box-shadow:var(--shadow);}
+.piece-swatch{width:30px;height:30px; border-radius:7px; flex-shrink:0;}
+.piece-row b{display:block; font-size:0.88rem;}
+.piece-row span{font-size:0.74rem; color:var(--ink-soft);}
+.runway-card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:18px; box-shadow:var(--shadow);}
+.perspective-row{display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap;}
+.runway-stage{margin-top:12px; height:210px; background:linear-gradient(180deg,#191418,#332a2e); border-radius:10px; position:relative; overflow:hidden;}
+.runway-floor{position:absolute; left:10%; right:10%; bottom:18px; height:2px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);}
+.runway-figure{position:absolute; bottom:20px; left:-60px; width:30px; height:110px; border-radius:8px 8px 4px 4px; animation:walk 3.1s linear infinite;}
+.runway-figure::before{content:''; position:absolute; left:50%; top:-16px; transform:translateX(-50%); width:15px;height:15px;border-radius:50%; background:#ecd2bd;}
+@keyframes walk{0%{left:-60px;} 100%{left:108%;}}
+.tip-line{margin:14px 0 0; font-style:italic; font-family:'Fraunces',serif; font-size:1.02rem;}
+.veo-details{margin-top:14px;}
+.veo-details summary{cursor:pointer; font-size:0.82rem; font-weight:600; color:var(--accent);}
+.veo-details textarea{width:100%; min-height:100px; margin:8px 0; border-radius:8px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); padding:10px; font-family:'Space Mono',monospace; font-size:0.74rem;}
+.ai-tag{font-family:'Space Mono',monospace; font-size:0.64rem; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em;}
+
+.inline-form{display:flex; gap:8px; margin:14px 0 20px; flex-wrap:wrap;}
+.inline-form input{flex:1; min-width:180px; padding:11px 16px; border-radius:999px; border:1px solid var(--line); background:var(--surface); color:var(--ink); font-size:0.88rem;}
+
+.sync-grid,.wheel-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px;}
+.sync-card,.wheel-card{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px; box-shadow:var(--shadow);}
+.sync-card{border-top:5px solid var(--accent);}
+.palette-strip{display:flex; gap:5px; margin:8px 0;}
+.palette-swatch{flex:1; height:20px; border-radius:4px;}
+.sync-note{grid-column:1/-1; color:var(--ink-soft); font-style:italic; font-family:'Fraunces',serif; margin-top:2px;}
+.wheel-card{text-align:center;}
+
+.inspo-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(196px,1fr)); gap:14px; margin-top:6px;}
+.inspo-note{grid-column:1/-1; color:var(--ink-soft); font-size:0.8rem;}
+.inspo-card{border-radius:12px; overflow:hidden; border:1px solid var(--line); background:var(--surface); box-shadow:var(--shadow);}
+.inspo-swatch{height:118px;}
+.inspo-body{padding:10px 12px;}
+.inspo-body .tag{font-size:0.66rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.04em; font-family:'Space Mono',monospace;}
+.inspo-body p{margin:5px 0; font-size:0.84rem;}
+.inspo-body .meta{font-size:0.68rem; color:var(--ink-soft); font-family:'Space Mono',monospace;}
+
+.agents-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px;}
+.agent-card{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px; box-shadow:var(--shadow); position:relative; padding-top:20px;}
+.agent-card::before{content:'';position:absolute; top:8px; left:16px; width:7px;height:7px;border-radius:50%; background:var(--bg); border:1px solid var(--line);}
+.agent-card h4{margin:0 0 5px; font-family:'Fraunces',serif;}
+.agent-card p{margin:0; color:var(--ink-soft); font-size:0.86rem;}
+.agent-badge{display:inline-block; margin-top:10px; font-size:0.64rem; font-weight:700; padding:3px 9px; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-family:'Space Mono',monospace;}
+
+.modal-veil{position:fixed; inset:0; background:rgba(20,16,13,0.55); display:flex; align-items:center; justify-content:center; padding:18px; z-index:80;}
+.modal-panel{background:var(--surface); border-radius:16px; padding:24px; max-width:420px; width:100%; position:relative; box-shadow:var(--shadow);}
+.modal-wide{max-width:620px;}
+.modal-close{position:absolute; top:12px; right:14px; background:none; border:none; font-size:1.3rem; cursor:pointer; color:var(--ink-soft); line-height:1;}
+.nudge-text{font-size:1.05rem; line-height:1.5; background:var(--surface-2); border-radius:10px; padding:14px; font-family:'Fraunces',serif;}
+.muted{color:var(--ink-soft);}
+.small{font-size:0.78rem;}
+
+.call-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0;}
+.video-box{position:relative; background:#111; border-radius:10px; overflow:hidden; aspect-ratio:4/3;}
+.video-box video{width:100%; height:100%; object-fit:cover;}
+.video-label{position:absolute; bottom:6px; left:8px; color:#fff; font-size:0.7rem; background:rgba(0,0,0,.55); padding:2px 8px; border-radius:999px; font-family:'Space Mono',monospace;}
+.call-controls{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;}
+.voting-panel{border-top:1px solid var(--line); padding-top:14px; position:relative;}
+.reaction-row{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;}
+.reaction-btn{border:1px solid var(--line); background:var(--surface-2); padding:8px 14px; border-radius:999px; cursor:pointer; font-weight:600; color:var(--ink);}
+.gauge{position:relative; height:14px; background:var(--surface-2); border-radius:999px; overflow:hidden; margin-bottom:4px; border:1px solid var(--line);}
+.gauge-fill{height:100%; width:50%; background:linear-gradient(90deg,var(--stamp),var(--hamper),var(--fresh)); transition:width .35s ease;}
+.gauge-label{font-family:'Space Mono',monospace; font-variant-numeric:tabular-nums; font-size:0.72rem; font-weight:700;}
+#burst-layer{position:absolute; inset:0; pointer-events:none; overflow:hidden;}
+.floating-emoji{position:absolute; bottom:60px; font-size:1.5rem; animation:floatUp 1.3s ease-out forwards;}
+@keyframes floatUp{0%{opacity:1; transform:translateY(0) scale(.8);} 100%{opacity:0; transform:translateY(-130px) scale(1.25);}}
+
+.toast{position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:var(--ink); color:var(--bg); padding:10px 20px; border-radius:999px; font-size:0.82rem; z-index:100; box-shadow:var(--shadow);}
+</style>
+
+<header class="masthead">
+  <div class="mast-left">
+    <div class="mark" aria-hidden="true"></div>
+    <div>
+      <p class="eyebrow">Maya · Liam · Sophie</p>
+      <h1>The Shared Rack</h1>
+      <p class="tagline">Plan tomorrow's fit tonight — one tap, zero effort, still styled.</p>
+    </div>
+  </div>
+  <div class="mast-right">
+    <span class="presence-pill" id="presence-pill"><span class="presence-dot"></span><span id="presence-text">Just you, for now</span></span>
+    <button class="btn btn-accent" id="fitting-room-btn">🎥 Fitting Room Call</button>
+  </div>
+</header>
+
+<div class="identity-row" id="identity-row">
+  <span class="identity-label">Shopping as</span>
+</div>
+
+<nav class="punch-tabs" id="tabs">
+  <button class="punch-tab active" data-tab="closet">Shared Closet</button>
+  <button class="punch-tab" data-tab="lookbook">Plan Tomorrow's Fit</button>
+  <button class="punch-tab" data-tab="squadsync">Squad Sync</button>
+  <button class="punch-tab" data-tab="roulette">Swap Roulette</button>
+  <button class="punch-tab" data-tab="inspo">Influencer Inspo</button>
+  <button class="punch-tab" data-tab="agents">AI Agents</button>
+</nav>
+
+<main>
+  <section class="view active" id="view-closet">
+    <div class="section-head">
+      <div>
+        <h2>Shared Closet</h2>
+        <p>Size, fabric and brand on every tag. Claim what's in the pool, toggle laundry, nudge whoever's holding your favorite piece.</p>
+      </div>
+    </div>
+    <div class="filter-row" id="member-filter">
+      <button class="chip active" data-member="all">All Group Pool</button>
+      <button class="chip" data-member="maya">Maya's</button>
+      <button class="chip" data-member="liam">Liam's</button>
+      <button class="chip" data-member="sophie">Sophie's</button>
+    </div>
+    <div class="rack" id="closet-grid"></div>
+  </section>
+
+  <section class="view" id="view-lookbook">
+    <div class="curate-row">
+      <div>
+        <h2>Plan Tomorrow's Fit</h2>
+        <p class="muted">One tap curates an outfit from the shared pool — with styling notes for whoever ends up wearing it.</p>
+      </div>
+      <button class="btn btn-accent" id="curate-btn">✨ Curate My Outfit</button>
+    </div>
+    <div class="empty-state" id="lookbook-empty">No outfit curated yet — tap "Curate My Outfit" to get started.</div>
+    <div class="lookbook-grid hidden" id="lookbook-content">
+      <div id="outfit-pieces"></div>
+      <div class="runway-card">
+        <div class="perspective-row" id="perspective-switch">
+          <button class="chip active" data-member="maya">Maya · 5'5" S</button>
+          <button class="chip" data-member="liam">Liam · 6'1" L</button>
+          <button class="chip" data-member="sophie">Sophie · 5'8" M</button>
+        </div>
+        <button class="btn btn-outline" id="watch-video-btn">▶ Watch AI Video Runway</button>
+        <div class="runway-stage hidden" id="runway-stage">
+          <div class="runway-floor"></div>
+          <div class="runway-figure" id="runway-figure"></div>
+        </div>
+        <p class="tip-line" id="styling-tip"></p>
+        <p class="ai-tag" id="tip-source"></p>
+        <details class="veo-details">
+          <summary>Exportable 4K Veo prompt</summary>
+          <textarea id="veo-prompt" readonly></textarea>
+          <button class="btn btn-ghost btn-sm" id="copy-veo-btn">Copy prompt</button>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-squadsync">
+    <div class="section-head">
+      <div>
+        <h2>Squad Sync</h2>
+        <p>Name the event — everyone gets a complementary color role, so the group photo reads coordinated, not matchy.</p>
+      </div>
+    </div>
+    <form class="inline-form" id="squadsync-form">
+      <input id="squadsync-event" type="text" placeholder="Saturday Rooftop Sunset" />
+      <button type="submit" class="btn btn-accent">Sync the Squad</button>
+    </form>
+    <div class="sync-grid" id="squadsync-result"></div>
+  </section>
+
+  <section class="view" id="view-roulette">
+    <div class="section-head">
+      <div>
+        <h2>Closet Swap Roulette</h2>
+        <p>Spin the wheel to pull one fusion dare-piece from each sibling's closet.</p>
+      </div>
+    </div>
+    <button class="btn btn-accent" id="spin-btn" style="margin-bottom:18px;">🎡 Spin the Wheel</button>
+    <div class="wheel-grid" id="roulette-result"></div>
+  </section>
+
+  <section class="view" id="view-inspo">
+    <div class="section-head">
+      <div>
+        <h2>Influencer Inspo</h2>
+        <p>Add a favorite stylist's handle — only their posts from the last 3 months make the board.</p>
+      </div>
+    </div>
+    <form class="inline-form" id="inspo-form">
+      <input id="inspo-handle" type="text" placeholder="@favorite.stylist" />
+      <button type="submit" class="btn btn-accent">Add</button>
+    </form>
+    <div class="filter-row" id="inspo-handles"></div>
+    <div class="inspo-grid" id="inspo-grid"></div>
+  </section>
+
+  <section class="view" id="view-agents">
+    <div class="section-head">
+      <div>
+        <h2>Meet the Agents</h2>
+        <p>The Shared Rack runs on a small crew of single-purpose agents, each expert at exactly one job.</p>
+      </div>
+    </div>
+    <div class="agents-grid" id="agents-grid"></div>
+  </section>
+</main>
+
+<div class="modal-veil hidden" id="nudge-modal">
+  <div class="modal-panel">
+    <button class="modal-close" data-close="nudge-modal">&times;</button>
+    <h3>Nudge drafted ✍️</h3>
+    <p class="nudge-text" id="nudge-text"></p>
+    <p class="muted small" id="nudge-source"></p>
+    <button class="btn btn-accent" data-close="nudge-modal" style="margin-top:6px;">Nice, close this</button>
+  </div>
+</div>
+
+<div class="modal-veil hidden" id="fitting-room-modal">
+  <div class="modal-panel modal-wide">
+    <button class="modal-close" data-close="fitting-room-modal">&times;</button>
+    <h3>Fitting Room Call</h3>
+    <p class="muted small">Open this page in a second tab and join to connect peer-to-peer.</p>
+    <div class="call-grid">
+      <div class="video-box"><video id="local-video" autoplay playsinline muted></video><span class="video-label">You</span></div>
+      <div class="video-box"><video id="remote-video" autoplay playsinline></video><span class="video-label" id="remote-label">Waiting for a second tab…</span></div>
+    </div>
+    <div class="call-controls">
+      <button class="btn btn-accent" id="join-call-btn">Join Call</button>
+      <button class="btn btn-ghost" id="mute-btn" disabled>Mute</button>
+      <button class="btn btn-ghost" id="cam-btn" disabled>Camera Off</button>
+      <button class="btn btn-danger" id="leave-call-btn" disabled>Leave</button>
+    </div>
+    <div class="voting-panel">
+      <div class="reaction-row">
+        <button class="reaction-btn" data-reaction="fire">🔥 Fire</button>
+        <button class="reaction-btn" data-reaction="slay">💅 Slay</button>
+        <button class="reaction-btn" data-reaction="swap">👟 Swap Shoes</button>
+        <button class="reaction-btn" data-reaction="pass">🙅 Hard Pass</button>
+      </div>
+      <div class="gauge"><div class="gauge-fill" id="gauge-fill"></div></div>
+      <span class="muted small">Live group approval — <span class="gauge-label" id="gauge-label">50</span>/100</span>
+      <div id="burst-layer"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast hidden" id="toast"></div>
+
+<script type="module">
+const MEMBERS = [
+  { id:'maya', name:'Maya', height:"5'5\"", size:'S', color:'var(--maya)' },
+  { id:'liam', name:'Liam', height:"6'1\"", size:'L', color:'var(--liam)' },
+  { id:'sophie', name:'Sophie', height:"5'8\"", size:'M', color:'var(--sophie)' },
+];
+const memberById = (id) => MEMBERS.find(m => m.id === id) || null;
+
+const FALLBACK_ITEMS = [
+  { id:'item-1', ownerId:'maya', name:'Camel Trench Coat', category:'outerwear', size:'S', fabric:'Wool-Blend Gabardine', brand:'Sezane', laundry:'fresh', pool:true, claimedBy:'liam' },
+  { id:'item-2', ownerId:'maya', name:'Silk Slip Dress', category:'dress', size:'S', fabric:'Mulberry Silk', brand:'Reformation', laundry:'fresh', pool:true, claimedBy:null },
+  { id:'item-3', ownerId:'maya', name:'Cropped Cardigan', category:'top', size:'S', fabric:'Merino Wool', brand:'Aritzia', laundry:'hamper', pool:false, claimedBy:null },
+  { id:'item-4', ownerId:'maya', name:'White Oxford Shirt', category:'top', size:'S', fabric:'Egyptian Cotton', brand:'J.Crew', laundry:'fresh', pool:true, claimedBy:null },
+  { id:'item-5', ownerId:'maya', name:'Wide-Leg Trousers', category:'bottom', size:'S', fabric:'Tencel Twill', brand:'Mango', laundry:'fresh', pool:true, claimedBy:null },
+  { id:'item-6', ownerId:'liam', name:'Raw Denim Jacket', category:'outerwear', size:'L', fabric:'13.5oz Raw Denim', brand:"Levi's Vintage", laundry:'fresh', pool:true, claimedBy:null },
+  { id:'item-7', ownerId:'liam', name:'Merino Crewneck', category:'top', size:'L', fabric:'Merino Wool', brand:'Uniqlo', laundry:'fresh', pool:true, claimedBy:null },
+  { id:'item-8', ownerId:'liam', name:'Chino Trousers', category:'bottom', size:'L', fabric:'Cotton Twill', brand:'Banana Republic', laundry:'hamper', pool:false, claimedBy:null },
+  { id:'item-9', ownerId:'liam', name:'Suede Chelsea Boots', category:'shoes', size:'11', fabric:'Suede', brand:'Clarks', laundry:'fresh', pool:true, claimedBy:null },
+  { id:'item-10', ownerId:'liam', name:'Oxford Button-Down', category:'top', size:'L', fabric:'Egyptian Cotton', brand:'J.Crew', laundry:'fresh', pool:true, claimedBy:null },
+  { id:'item-11', ownerId:'sophie', name:'Leather Moto Jacket', category:'outerwear', size:'M', fabric:'Lambskin Leather', brand:'AllSaints', laundry:'fresh', pool:true, claimedBy:null },
+  { id:'item-12', ownerId:'sophie', name:'Pleated Midi Skirt', category:'bottom', size:'M', fabric:'Satin Polyester', brand:'Zara', laundry:'fresh', pool:true, claimedBy:null },
+  { id:'item-13', ownerId:'sophie', name:'Ribbed Tank Top', category:'top', size:'M', fabric:'Egyptian Cotton', brand:'Skims', laundry:'hamper', pool:true, claimedBy:null },
+  { id:'item-14', ownerId:'sophie', name:'Platform Boots', category:'shoes', size:'8', fabric:'Vegan Leather', brand:'Dr. Martens', laundry:'fresh', pool:false, claimedBy:null },
+  { id:'item-15', ownerId:'sophie', name:'Cashmere Wrap Coat', category:'outerwear', size:'M', fabric:'Cashmere', brand:'Mango', laundry:'fresh', pool:true, claimedBy:null },
+];
+
+const CATEGORY_EMOJI = { outerwear:'🧥', top:'👕', bottom:'👖', dress:'👗', shoes:'👞' };
+
+const AGENTS = [
+  { id:'nudge', name:'Nudge Agent', desc:'Drafts witty, non-passive-aggressive return reminders for borrowed pieces.', live:true },
+  { id:'lookbook', name:'Lookbook Agent', desc:'Curates a shareable outfit from the pool and adapts styling notes per body type.', live:true },
+  { id:'squadsync', name:'Squad Sync Agent', desc:'Assigns complementary color roles for an event so the group photographs cohesively.', live:true },
+  { id:'roulette', name:'Roulette Agent', desc:'Spins the wheel to pull one fusion piece per sibling for a dare look.', live:false },
+  { id:'voting', name:'Voting Agent', desc:'Tallies live Fit Check reactions into a group approval gauge.', live:false },
+  { id:'influencer', name:'Influencer Inspo Agent', desc:'Pulls a followed stylist’s recent posts and filters to the last 3 months.', live:false },
+];
+
+const NUDGE_TEMPLATES = [
+  (item,owner,borrower) => `Hey ${borrower.name}! Your friendly neighborhood ${owner.name} here — my ${item.name} misses me. Return it before it files a missing person report? 👗🚨`,
+  (item,owner,borrower) => `${borrower.name}, this is a courtesy reminder from the Closet Police: the ${item.name} has overstayed its visa. Please release it back into ${owner.name}'s custody ASAP.`,
+  (item,owner,borrower) => `Not to be dramatic but I NEED my ${item.name} back, ${borrower.name}. It's basically part of my identity at this point. Love you, return it. — ${owner.name}`,
+  (item,owner,borrower) => `${borrower.name}!! The ${item.name} called, it wants to come home to ${owner.name}. Rent is due (in hugs). Send it back soon 💌`,
+  (item,owner,borrower) => `Gentle nudge from ${owner.name}: my ${item.name} has been on an extended vacation with you, ${borrower.name}. Time to book its flight home ✈️`,
+];
+const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+function heightLabel(id){ return { maya:"5'5\" petite", liam:"6'1\" tall", sophie:"5'8\" mid-height" }[id] || ''; }
+const FALLBACK_TIPS = {
+  maya: (item) => `On a petite 5'5" frame, the ${item.name} reads best cuffed or cropped — keep the hem above mid-calf so it elongates the leg line.`,
+  liam: (item) => `At 6'1", the ${item.name} drapes long and lean — size up half a step in layering pieces so proportions stay balanced, not swallowed.`,
+  sophie: (item) => `At 5'8", the ${item.name} hits at a true, flattering length — a slight waist cinch keeps the silhouette sharp.`,
+};
+function veoPrompt(outfit, memberId){
+  const garments = outfit.map(i => `${i.fabric} ${i.name.toLowerCase()} by ${i.brand}`).join(', ');
+  return `Cinematic 4K fashion runway shot, 24fps, shallow depth of field. A confident model with a ${heightLabel(memberId)} build walks a minimalist runway toward camera, wearing: ${garments}. Soft directional studio lighting, subtle fabric movement and drape, slow dolly-in, seamless loop, high-fashion editorial color grade, no text overlays.`;
+}
+
+const PALETTE_BANK = [
+  ['Terracotta','Cream','Espresso'], ['Sunset Coral','Sandstone','Deep Navy'],
+  ['Sage Green','Ivory','Charcoal'], ['Dusty Rose','Camel','Black'], ['Ocean Blue','Bone White','Rust'],
+];
+function paletteForEvent(name){
+  let h = 0; for (const ch of name) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return PALETTE_BANK[h % PALETTE_BANK.length];
+}
+
+const STYLE_TAGS = ['oversized tailoring','monochrome layering','texture mixing','street-luxe','quiet luxury','vintage denim','color blocking','minimalist knitwear','statement outerwear','soft grunge','coastal neutral','high-contrast accessorizing'];
+function mulberry32(a){ return function(){ a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+function seedFromHandle(h){ let x = 0; for (const ch of h) x = (x * 31 + ch.charCodeAt(0)) >>> 0; return x; }
+function capitalize(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+function mockPostsFor(handle){
+  const rand = mulberry32(seedFromHandle(handle)); const posts = [];
+  for (let i = 0; i < 8; i += 1) {
+    const monthsAgo = Math.floor(rand() * 5);
+    const daysAgo = monthsAgo * 30 + Math.floor(rand() * 28);
+    const date = new Date(Date.now() - daysAgo * 86400000).toISOString();
+    const tag = STYLE_TAGS[Math.floor(rand() * STYLE_TAGS.length)];
+    posts.push({ id:`${handle}-${i}`, date, styleTag:tag, caption:`${capitalize(tag)} moment — swipe for the breakdown.`, swatch:`hsl(${Math.floor(rand()*360)},52%,68%)`, likes:200+Math.floor(rand()*9000) });
+  }
+  return posts.sort((a,b) => new Date(b.date) - new Date(a.date));
+}
+function getInspo(handle){
+  const posts = mockPostsFor(handle);
+  const cutoff = Date.now() - 90 * 86400000;
+  const recent = posts.filter(p => new Date(p.date).getTime() >= cutoff);
+  return { handle, total: posts.length, recent };
+}
+
+function $(id){ return document.getElementById(id); }
+let toastTimer = null;
+function toast(msg){ const el = $('toast'); el.textContent = msg; el.classList.remove('hidden'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.add('hidden'), 2800); }
+
+const state = {
+  items: FALLBACK_ITEMS.map(i => ({ ...i })),
+  myIdentity: localStorage.getItem('rack-identity') || null,
+  lookbook: null, squadsync: null, roulette: null,
+  influencerHandles: [], activeInfluencer: null,
+  votesLog: [], filter: 'all', perspective: 'maya',
+};
+
+let db = null, room = null, sample = null;
+
+async function initCapabilities(){
+  if (!window.claude || typeof window.claude.use !== 'function') return;
+  const [dbNs, roomNs, sampleNs] = await Promise.all([
+    window.claude.use('db').catch(() => null),
+    window.claude.use('room').catch(() => null),
+    window.claude.use('sample').catch(() => null),
+  ]);
+  db = dbNs; room = roomNs; sample = sampleNs;
+  if (db) subscribeDb();
+  if (room) setupRoom();
+}
+
+function subscribeDb(){
+  db.collection('items').onSnapshot((snap) => {
+    if (!snap.empty) { state.items = snap.docs.map(d => ({ id:d.id, ...d.data() })); renderCloset(); }
+  }, () => {});
+  db.doc('state/lookbook').onSnapshot((snap) => { if (snap.exists) { state.lookbook = snap.data(); renderLookbook(); } });
+  db.doc('state/squadsync').onSnapshot((snap) => { if (snap.exists) { state.squadsync = snap.data(); renderSquadSync(); } });
+  db.doc('state/roulette').onSnapshot((snap) => { if (snap.exists) { state.roulette = snap.data(); renderRoulette(); } });
+  db.collection('influencers').onSnapshot((snap) => {
+    state.influencerHandles = snap.docs.map(d => d.id);
+    renderInfluencerHandles();
+    if (!state.activeInfluencer && state.influencerHandles.length) selectInfluencer(state.influencerHandles[0]);
+  });
+  db.collection('votes').orderBy('at','desc').limit(300).onSnapshot((snap) => { state.votesLog = snap.docs.map(d => d.data()); updateGauge(); });
+}
+
+let myPeerLabel = null;
+function myPeerRef(){ return room ? room.peers().find(p => p.isMe && p.sameTab) : null; }
+function setupRoom(){
+  room.onPeers((change) => { renderPresence(change.peers); if (joined) maybeStartCall(); });
+  room.on('rtc', handleRtcMessage);
+  room.on('vote', (msg) => { if (!msg.sameTab) spawnEmojiBurst(msg.data && msg.data.reaction); });
+}
+function renderPresence(peers){
+  const viewers = peers.filter(p => p.kind === 'viewer');
+  $('presence-text').textContent = viewers.length <= 1 ? 'Just you, for now' : `${viewers.length} browsing the rack`;
+}
+
+// ---- identity ----
+function renderIdentity(){
+  const row = $('identity-row');
+  row.querySelectorAll('.id-chip').forEach(c => c.remove());
+  for (const m of MEMBERS) {
+    const chip = document.createElement('button');
+    chip.className = `id-chip${state.myIdentity === m.id ? ' active' : ''}`;
+    chip.innerHTML = `<span class="dot" style="background:${m.color}"></span>${m.name}`;
+    chip.addEventListener('click', () => {
+      state.myIdentity = m.id;
+      localStorage.setItem('rack-identity', m.id);
+      renderIdentity(); renderCloset();
+      if (room) room.presence({ name: m.id }).catch(() => {});
+    });
+    row.appendChild(chip);
+  }
+}
+
+// ---- closet ----
+function itemCard(item){
+  const taken = Boolean(item.claimedBy);
+  const owner = memberById(item.ownerId);
+  const div = document.createElement('div');
+  div.className = `tag-card${taken ? ' taken' : ''}`;
+
+  const photo = document.createElement('div');
+  photo.className = 'tag-photo';
+  photo.style.background = `linear-gradient(135deg, color-mix(in srgb, ${owner.color} 35%, transparent), color-mix(in srgb, ${owner.color} 12%, transparent))`;
+  photo.textContent = CATEGORY_EMOJI[item.category] || '🧦';
+  div.appendChild(photo);
+
+  const ownerTag = document.createElement('span');
+  ownerTag.className = 'owner-chip'; ownerTag.style.background = owner.color; ownerTag.textContent = owner.name;
+  photo.appendChild(ownerTag);
+
+  const laundryBtn = document.createElement('button');
+  laundryBtn.className = `laundry-pill ${item.laundry}`;
+  laundryBtn.textContent = item.laundry === 'fresh' ? '✓ Fresh' : '⏳ Hamper';
+  laundryBtn.addEventListener('click', () => setLaundry(item, item.laundry === 'fresh' ? 'hamper' : 'fresh'));
+  photo.appendChild(laundryBtn);
+
+  if (taken) {
+    const stamp = document.createElement('div');
+    stamp.className = 'stamp';
+    stamp.textContent = `Taken by ${memberById(item.claimedBy)?.name || item.claimedBy}`;
+    photo.appendChild(stamp);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'tag-body';
+  body.innerHTML = `<h4>${item.name}</h4><span class="spec-line">SIZE ${item.size} · ${item.fabric}</span><span class="spec-line">${item.brand}</span>`;
+
+  const actions = document.createElement('div');
+  actions.className = 'tag-actions';
+  if (taken) {
+    if (state.myIdentity === item.ownerId) {
+      const nudgeBtn = document.createElement('button');
+      nudgeBtn.className = 'btn btn-accent btn-sm'; nudgeBtn.textContent = 'Nudge';
+      nudgeBtn.addEventListener('click', () => nudgeItem(item));
+      actions.appendChild(nudgeBtn);
+    }
+    if (state.myIdentity === item.claimedBy) {
+      const returnBtn = document.createElement('button');
+      returnBtn.className = 'btn btn-ghost btn-sm'; returnBtn.textContent = 'Return it';
+      returnBtn.addEventListener('click', () => releaseItem(item));
+      actions.appendChild(returnBtn);
+    }
+    if (!actions.childElementCount) {
+      const note = document.createElement('span'); note.className = 'spec-line'; note.textContent = 'With a roommate right now';
+      actions.appendChild(note);
+    }
+  } else if (item.pool && item.ownerId !== state.myIdentity) {
+    const claimBtn = document.createElement('button');
+    claimBtn.className = 'btn btn-accent btn-sm'; claimBtn.textContent = 'Claim it';
+    claimBtn.addEventListener('click', () => claimItem(item));
+    actions.appendChild(claimBtn);
+  } else {
+    const note = document.createElement('span'); note.className = 'spec-line';
+    note.textContent = item.pool ? 'In your closet' : 'Not in shared pool';
+    actions.appendChild(note);
+  }
+  body.appendChild(actions);
+  div.appendChild(body);
+  return div;
+}
+
+function renderCloset(){
+  const grid = $('closet-grid'); grid.innerHTML = '';
+  const visible = state.filter === 'all' ? state.items.filter(i => i.pool) : state.items.filter(i => i.ownerId === state.filter);
+  for (const item of visible) grid.appendChild(itemCard(item));
+  if (!visible.length) grid.innerHTML = '<p class="muted">Nothing here yet.</p>';
+}
+
+async function claimItem(item){
+  if (!state.myIdentity) { toast('Pick who you are shopping as, first.'); return; }
+  if (db) { try { await db.doc('items/' + item.id).update({ claimedBy: state.myIdentity }); } catch (e) { toast('Could not claim right now.'); } }
+  else { item.claimedBy = state.myIdentity; renderCloset(); }
+  toast(`${memberById(state.myIdentity).name} claimed the ${item.name}`);
+}
+async function releaseItem(item){
+  if (db) { try { await db.doc('items/' + item.id).update({ claimedBy: null }); } catch (e) { toast('Could not update right now.'); } }
+  else { item.claimedBy = null; renderCloset(); }
+  toast(`${item.name} returned to ${memberById(item.ownerId).name}'s closet`);
+}
+async function setLaundry(item, status){
+  if (db) { try { await db.doc('items/' + item.id).update({ laundry: status }); } catch (e) { /* keep prior state */ } }
+  else { item.laundry = status; renderCloset(); }
+}
+
+async function nudgeItem(item){
+  const owner = memberById(item.ownerId), borrower = memberById(item.claimedBy);
+  let text = null, source = 'template';
+  if (sample) {
+    try {
+      const prompt = `Write one short, witty, playful text message (strictly under 30 words, no hashtags) from ${owner.name} to their roommate ${borrower.name}, reminding them to return the borrowed "${item.name}" (${item.fabric}). Warm and funny, never passive aggressive. Reply with only the message text.`;
+      const res = await sample(prompt, { modelTier:'quick', cache:false });
+      text = res.text.trim(); source = 'claude';
+    } catch (e) { /* fall back to template below */ }
+  }
+  if (!text) text = pick(NUDGE_TEMPLATES)(item, owner, borrower);
+  $('nudge-text').textContent = text;
+  $('nudge-source').textContent = source === 'claude' ? 'Drafted live by Claude' : 'Drafted by the Nudge Agent (offline template — this preview isn’t granted live Claude access)';
+  openModal('nudge-modal');
+}
+
+// ---- lookbook ----
+function curateOutfitLocal(){
+  const pool = state.items.filter(i => i.pool && !i.claimedBy);
+  const categories = ['outerwear','top','bottom','dress','shoes'];
+  const picked = []; const used = new Set();
+  for (const cat of categories) {
+    const candidates = pool.filter(i => i.category === cat && !picked.includes(i));
+    if (!candidates.length) continue;
+    candidates.sort((a,b) => (used.has(a.ownerId)?1:0) - (used.has(b.ownerId)?1:0));
+    const choice = candidates[Math.floor(Math.random() * Math.min(2, candidates.length))];
+    if (choice) { picked.push(choice); used.add(choice.ownerId); }
+    if (picked.length >= 4) break;
+  }
+  return picked.length ? picked : state.items.slice(0,3);
+}
+
+async function curateLookbook(){
+  const btn = $('curate-btn'); btn.disabled = true; btn.textContent = 'Curating…';
+  try {
+    const outfit = curateOutfitLocal();
+    let tips = null, tipSource = 'template';
+    if (sample) {
+      try {
+        const prompt = `Outfit pieces: ${outfit.map(i => i.name).join(', ')}. Reply with ONLY JSON (no code fence, no commentary) in exactly this shape: {"maya":"...","liam":"...","sophie":"..."} where each value is one punchy styling-tip sentence (under 28 words) for how this outfit should be worn on that person: Maya is 5'5" petite size S, Liam is 6'1" tall size L, Sophie is 5'8" mid-height size M.`;
+        tips = await sample.json(prompt, { modelTier:'quick', cache:false });
+        if (!tips || !tips.maya || !tips.liam || !tips.sophie) tips = null; else tipSource = 'claude';
+      } catch (e) { tips = null; }
+    }
+    if (!tips) tips = { maya: FALLBACK_TIPS.maya(outfit[0]||{name:'this piece'}), liam: FALLBACK_TIPS.liam(outfit[0]||{name:'this piece'}), sophie: FALLBACK_TIPS.sophie(outfit[0]||{name:'this piece'}) };
+    const veo = { maya: veoPrompt(outfit,'maya'), liam: veoPrompt(outfit,'liam'), sophie: veoPrompt(outfit,'sophie') };
+    const result = { outfitIds: outfit.map(i => i.id), tips, veo, source: tipSource, curatedAt: Date.now() };
+    state.lookbook = result; renderLookbook();
+    if (db) db.doc('state/lookbook').set(result).catch(() => {});
+  } finally { btn.disabled = false; btn.textContent = '✨ Curate My Outfit'; }
+}
+
+function renderLookbook(){
+  const r = state.lookbook; if (!r) return;
+  $('lookbook-empty').classList.add('hidden');
+  $('lookbook-content').classList.remove('hidden');
+  const wrap = $('outfit-pieces'); wrap.innerHTML = '';
+  const outfit = r.outfitIds.map(id => state.items.find(i => i.id === id)).filter(Boolean);
+  for (const item of outfit) {
+    const row = document.createElement('div'); row.className = 'piece-row';
+    row.innerHTML = `<div class="piece-swatch" style="background:${memberById(item.ownerId).color}"></div><div><b>${item.name}</b><span>${item.fabric} · ${item.brand} · from ${memberById(item.ownerId).name}'s closet</span></div>`;
+    wrap.appendChild(row);
+  }
+  applyPerspective(state.perspective);
+}
+function applyPerspective(memberId){
+  state.perspective = memberId;
+  document.querySelectorAll('#perspective-switch .chip').forEach(c => c.classList.toggle('active', c.dataset.member === memberId));
+  const r = state.lookbook; if (!r) return;
+  const scale = { maya:0.82, liam:1.15, sophie:1.0 }[memberId] || 1;
+  const figure = $('runway-figure');
+  figure.style.height = `${110 * scale}px`;
+  figure.style.background = `linear-gradient(180deg, ${memberById(memberId).color}, color-mix(in srgb, ${memberById(memberId).color} 60%, transparent))`;
+  $('styling-tip').textContent = `💡 ${r.tips[memberId]}`;
+  $('tip-source').textContent = r.source === 'claude' ? 'Styling note drafted live by Claude' : 'Styling note from the offline template bank';
+  $('veo-prompt').value = r.veo[memberId];
+}
+
+// ---- squad sync ----
+function styleSquadLocal(eventName){
+  const palette = paletteForEvent(eventName);
+  const looks = MEMBERS.map((m, idx) => {
+    const colorRole = palette[idx % palette.length];
+    const candidates = state.items.filter(i => i.ownerId === m.id || (i.pool && !i.claimedBy && i.ownerId !== m.id));
+    const item = candidates[Math.floor(Math.random() * candidates.length)];
+    return { memberId:m.id, colorRole, itemId: item ? item.id : null };
+  });
+  return { event:eventName, palette, looks };
+}
+async function squadSync(eventName){
+  const base = styleSquadLocal(eventName);
+  let note = null, source = 'template';
+  if (sample) {
+    try {
+      const prompt = `Event: "${eventName}". Three friends are dressing in a coordinated palette of ${base.palette.join(', ')}, each assigned a role color: ${base.looks.map(l => `${memberById(l.memberId).name}=${l.colorRole}`).join(', ')}. In one short sentence (under 30 words), give a fun group-styling note for how they'll photograph well together. Reply with only that sentence.`;
+      const res = await sample(prompt, { modelTier:'quick', cache:false }); note = res.text.trim(); source = 'claude';
+    } catch (e) { note = null; }
+  }
+  if (!note) note = `Anchor everyone in ${base.palette[0]}, ${base.palette[1]} and ${base.palette[2]} so the trio reads as one coordinated frame without matching outfits.`;
+  const result = { ...base, note, source, syncedAt: Date.now() };
+  state.squadsync = result; renderSquadSync();
+  if (db) db.doc('state/squadsync').set(result).catch(() => {});
+}
+function renderSquadSync(){
+  const r = state.squadsync; if (!r) return;
+  const wrap = $('squadsync-result'); wrap.innerHTML = '';
+  for (const look of r.looks) {
+    const item = state.items.find(i => i.id === look.itemId);
+    const card = document.createElement('div'); card.className = 'sync-card';
+    card.innerHTML = `<h4>${memberById(look.memberId).name}</h4><p class="muted small">Color role: <strong>${look.colorRole}</strong></p><p>${item ? `${item.name} · ${item.fabric}` : 'No piece available'}</p>`;
+    wrap.appendChild(card);
+  }
+  const palette = document.createElement('div'); palette.className = 'sync-card'; palette.style.borderTopColor = 'var(--line)';
+  palette.innerHTML = `<h4>${r.event}</h4><div class="palette-strip">${r.palette.map(c => `<div class="palette-swatch" title="${c}" style="background:var(--surface-2);border:1px solid var(--line);"></div>`).join('')}</div><p class="muted small">${r.palette.join(' · ')}</p>`;
+  wrap.appendChild(palette);
+  const note = document.createElement('p'); note.className = 'sync-note'; note.textContent = r.note;
+  wrap.appendChild(note);
+}
+
+// ---- roulette ----
+function spinRouletteLocal(){
+  const picks = MEMBERS.map(m => {
+    const candidates = state.items.filter(i => i.ownerId !== m.id && i.pool && !i.claimedBy);
+    const pool = candidates.length ? candidates : state.items.filter(i => i.ownerId !== m.id);
+    const item = pool[Math.floor(Math.random() * pool.length)];
+    return { memberId:m.id, itemId: item ? item.id : null };
+  });
+  return { picks, spunAt: Date.now() };
+}
+function spinRoulette(){
+  const btn = $('spin-btn'); btn.disabled = true; btn.textContent = '🎡 Spinning…';
+  setTimeout(() => {
+    const result = spinRouletteLocal();
+    state.roulette = result; renderRoulette();
+    if (db) db.doc('state/roulette').set(result).catch(() => {});
+    btn.disabled = false; btn.textContent = '🎡 Spin the Wheel';
+  }, 420);
+}
+function renderRoulette(){
+  const r = state.roulette; if (!r) return;
+  const wrap = $('roulette-result'); wrap.innerHTML = '';
+  for (const p of r.picks) {
+    const item = state.items.find(i => i.id === p.itemId);
+    const card = document.createElement('div'); card.className = 'wheel-card';
+    card.innerHTML = `<h4>${memberById(p.memberId).name}</h4><p>${item ? item.name : '—'}</p><p class="muted small">${item ? `from ${memberById(item.ownerId).name}'s closet · ${item.fabric}` : ''}</p>`;
+    wrap.appendChild(card);
+  }
+}
+
+// ---- influencer inspo ----
+function renderInfluencerHandles(){
+  const wrap = $('inspo-handles'); wrap.innerHTML = '';
+  for (const handle of state.influencerHandles) {
+    const chip = document.createElement('button');
+    chip.className = `chip${handle === state.activeInfluencer ? ' active' : ''}`;
+    chip.textContent = `@${handle}`;
+    chip.addEventListener('click', () => selectInfluencer(handle));
+    wrap.appendChild(chip);
+  }
+}
+function selectInfluencer(handle){
+  state.activeInfluencer = handle; renderInfluencerHandles();
+  const { total, recent } = getInspo(handle);
+  const grid = $('inspo-grid'); grid.innerHTML = '';
+  if (!recent.length) { grid.innerHTML = '<p class="muted">No posts from the last 3 months.</p>'; return; }
+  const note = document.createElement('p'); note.className = 'inspo-note';
+  note.textContent = `${recent.length} of ${total} posts fall within the last 3 months.`;
+  grid.appendChild(note);
+  for (const post of recent) {
+    const daysAgo = Math.round((Date.now() - new Date(post.date).getTime()) / 86400000);
+    const card = document.createElement('div'); card.className = 'inspo-card';
+    card.innerHTML = `<div class="inspo-swatch" style="background:${post.swatch}"></div><div class="inspo-body"><span class="tag">${post.styleTag}</span><p>${post.caption}</p><span class="meta">${daysAgo}d ago · ${post.likes.toLocaleString()} likes</span></div>`;
+    grid.appendChild(card);
+  }
+}
+async function addInfluencer(raw){
+  const handle = raw.trim().replace(/^@/,''); if (!handle) return;
+  if (!state.influencerHandles.includes(handle)) state.influencerHandles.push(handle);
+  renderInfluencerHandles(); selectInfluencer(handle);
+  if (db) { const safeId = handle.replace(/[^A-Za-z0-9_.~:@+-]/g,'_').slice(0,200); db.doc('influencers/' + safeId).set({ handle, addedAt: Date.now() }).catch(() => {}); }
+}
+
+// ---- voting / fitting room ----
+function spawnEmojiBurst(reaction){
+  const emoji = { fire:'🔥', slay:'💅', swap:'👟', pass:'🙅' }[reaction] || '✨';
+  const layer = $('burst-layer');
+  for (let i = 0; i < 5; i += 1) {
+    const span = document.createElement('span'); span.className = 'floating-emoji'; span.textContent = emoji;
+    span.style.left = `${10 + Math.random() * 80}%`; span.style.animationDelay = `${i * 80}ms`;
+    layer.appendChild(span);
+    span.addEventListener('animationend', () => span.remove());
+  }
+}
+function updateGauge(){
+  const TARGET = { fire:90, slay:90, swap:50, pass:10 };
+  let score = 50;
+  if (state.votesLog.length) {
+    const sum = state.votesLog.reduce((acc, v) => acc + (TARGET[v.reaction] ?? 50), 0);
+    score = Math.round(sum / state.votesLog.length);
+  }
+  $('gauge-fill').style.width = `${score}%`; $('gauge-label').textContent = score;
+}
+async function castVote(reaction){
+  spawnEmojiBurst(reaction);
+  state.votesLog.unshift({ reaction, at: Date.now() }); updateGauge();
+  if (db) db.collection('votes').add({ reaction, at: Date.now() }).catch(() => {});
+  if (room) room.emit('vote', { reaction }).catch(() => {});
+}
+
+let pc = null, localStream = null, remotePeer = null, joined = false, micOn = true, camOn = true;
+function setRemoteLabel(t){ $('remote-label').textContent = t; }
+async function createPeerConnection(targetPeer){
+  remotePeer = targetPeer;
+  pc = new RTCPeerConnection({ iceServers:[{ urls:'stun:stun.l.google.com:19302' }] });
+  localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+  pc.onicecandidate = (e) => { if (e.candidate) { const me = myPeerRef(); if (me) room.emit('rtc', { to:remotePeer, from:me.peer, type:'ice', data:e.candidate }).catch(() => {}); } };
+  pc.ontrack = (e) => { $('remote-video').srcObject = e.streams[0]; setRemoteLabel('Connected'); };
+  pc.onconnectionstatechange = () => { if (pc && (pc.connectionState === 'disconnected' || pc.connectionState === 'failed')) setRemoteLabel('Waiting for a second tab…'); };
+}
+async function startAsCaller(targetPeer){
+  await createPeerConnection(targetPeer);
+  const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
+  const me = myPeerRef(); if (me) await room.emit('rtc', { to:targetPeer, from:me.peer, type:'offer', data:offer });
+}
+async function handleRtcMessage(msg){
+  const payload = msg.data || {}; const me = myPeerRef();
+  if (!me || payload.to !== me.peer) return;
+  if (payload.type === 'offer') {
+    if (!pc) await createPeerConnection(payload.from);
+    await pc.setRemoteDescription(payload.data);
+    const answer = await pc.createAnswer(); await pc.setLocalDescription(answer);
+    await room.emit('rtc', { to:payload.from, from:me.peer, type:'answer', data:answer });
+  } else if (payload.type === 'answer') { if (pc) await pc.setRemoteDescription(payload.data); }
+  else if (payload.type === 'ice') { if (pc) { try { await pc.addIceCandidate(payload.data); } catch (e) {} } }
+}
+function maybeStartCall(){
+  if (!joined || pc || !room) return;
+  const others = room.peers().filter(p => !p.isMe && p.presence && p.presence.inCall);
+  if (!others.length) { setRemoteLabel('Waiting for a second tab…'); return; }
+  const me = myPeerRef(); const target = others[0];
+  if (!me) return;
+  if (me.peer < target.peer) startAsCaller(target.peer); else setRemoteLabel('Waiting for the other tab to connect…');
+}
+async function joinCall(){
+  if (!room) { toast('Live calling needs this page open on claude.ai.'); return; }
+  try { localStream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true }); }
+  catch (e) { setRemoteLabel('Camera/mic unavailable in this preview.'); return; }
+  $('local-video').srcObject = localStream;
+  joined = true;
+  $('join-call-btn').disabled = true; $('mute-btn').disabled = false; $('cam-btn').disabled = false; $('leave-call-btn').disabled = false;
+  await room.presence({ inCall:true, name: state.myIdentity || 'guest' });
+  maybeStartCall();
+}
+async function leaveCall(){
+  if (!joined) return; joined = false;
+  if (pc) { pc.close(); pc = null; }
+  if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+  $('local-video').srcObject = null; $('remote-video').srcObject = null;
+  setRemoteLabel('Waiting for a second tab…');
+  $('join-call-btn').disabled = false; $('mute-btn').disabled = true; $('cam-btn').disabled = true; $('leave-call-btn').disabled = true;
+  if (room) room.presence({ inCall:false }).catch(() => {});
+}
+function toggleMic(){ if (!localStream) return; micOn = !micOn; localStream.getAudioTracks().forEach(t => t.enabled = micOn); $('mute-btn').textContent = micOn ? 'Mute' : 'Unmute'; }
+function toggleCam(){ if (!localStream) return; camOn = !camOn; localStream.getVideoTracks().forEach(t => t.enabled = camOn); $('cam-btn').textContent = camOn ? 'Camera Off' : 'Camera On'; }
+
+// ---- modals & tabs ----
+function openModal(id){ $(id).classList.remove('hidden'); }
+function closeModal(id){ $(id).classList.add('hidden'); if (id === 'fitting-room-modal') leaveCall(); }
+
+function initTabs(){
+  $('tabs').addEventListener('click', (e) => {
+    const btn = e.target.closest('.punch-tab'); if (!btn) return;
+    document.querySelectorAll('.punch-tab').forEach(t => t.classList.toggle('active', t === btn));
+    document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === `view-${btn.dataset.tab}`));
+  });
+}
+function initEvents(){
+  $('member-filter').addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (!b) return; state.filter = b.dataset.member; document.querySelectorAll('#member-filter .chip').forEach(c => c.classList.toggle('active', c === b)); renderCloset(); });
+  $('curate-btn').addEventListener('click', curateLookbook);
+  $('perspective-switch').addEventListener('click', (e) => { const c = e.target.closest('.chip'); if (c) applyPerspective(c.dataset.member); });
+  $('watch-video-btn').addEventListener('click', () => $('runway-stage').classList.toggle('hidden'));
+  $('copy-veo-btn').addEventListener('click', async () => { const ta = $('veo-prompt'); ta.select(); try { await navigator.clipboard.writeText(ta.value); toast('Prompt copied'); } catch (e) { document.execCommand('copy'); } });
+  $('squadsync-form').addEventListener('submit', (e) => { e.preventDefault(); const v = $('squadsync-event').value.trim() || 'Group Hangout'; squadSync(v); });
+  $('spin-btn').addEventListener('click', spinRoulette);
+  $('inspo-form').addEventListener('submit', (e) => { e.preventDefault(); const el = $('inspo-handle'); addInfluencer(el.value); el.value = ''; });
+  $('fitting-room-btn').addEventListener('click', () => openModal('fitting-room-modal'));
+  document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => closeModal(b.dataset.close)));
+  $('join-call-btn').addEventListener('click', () => joinCall());
+  $('leave-call-btn').addEventListener('click', () => leaveCall());
+  $('mute-btn').addEventListener('click', toggleMic);
+  $('cam-btn').addEventListener('click', toggleCam);
+  document.querySelectorAll('.reaction-btn').forEach(b => b.addEventListener('click', () => castVote(b.dataset.reaction)));
+  window.addEventListener('beforeunload', () => { if (joined && room) room.presence({ inCall:false }).catch(() => {}); });
+}
+function renderAgents(){
+  const grid = $('agents-grid'); grid.innerHTML = '';
+  for (const a of AGENTS) {
+    const card = document.createElement('div'); card.className = 'agent-card';
+    card.innerHTML = `<h4>${a.name}</h4><p>${a.desc}</p><span class="agent-badge">${a.live ? (sample ? 'live via Claude' : 'template fallback') : 'deterministic'}</span>`;
+    grid.appendChild(card);
+  }
+}
+
+function boot(){
+  initTabs(); initEvents(); renderIdentity(); renderCloset(); renderAgents();
+  initCapabilities().then(renderAgents);
+}
+boot();
+</script>
