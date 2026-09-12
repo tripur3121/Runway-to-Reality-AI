@@ -12,6 +12,7 @@ import { spin as rouletteSpin } from './agents/rouletteAgent.js';
 import { castVote, getScore, resetVotes } from './agents/votingAgent.js';
 import { getInspo } from './agents/influencerAgent.js';
 import { ROSTER } from './agents/orchestrator.js';
+import { generateVideo } from './agents/geminiClient.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
@@ -25,6 +26,7 @@ const MIME = {
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
   '.ico': 'image/x-icon',
+  '.mp4': 'video/mp4',
 };
 
 const sseClients = new Set();
@@ -173,6 +175,22 @@ async function handleApi(req, res, pathname, query) {
     const result = { outfit, tips, veoPrompts: prompts };
     broadcast('lookbook-curated', result);
     return sendJson(res, 200, result);
+  }
+
+  if (pathname === '/api/lookbook/video' && req.method === 'POST') {
+    const body = await readBody(req);
+    const prompt = (body.prompt || '').slice(0, 2000);
+    if (!prompt) return sendJson(res, 400, { error: 'prompt required' });
+    try {
+      const buffer = await generateVideo(prompt);
+      const filename = `veo-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.mp4`;
+      const dir = path.join(PUBLIC_DIR, 'generated');
+      await fsp.mkdir(dir, { recursive: true });
+      await fsp.writeFile(path.join(dir, filename), buffer);
+      return sendJson(res, 200, { videoUrl: `/generated/${filename}` });
+    } catch (e) {
+      return sendJson(res, 502, { error: e.message });
+    }
   }
 
   if (pathname === '/api/squadsync' && req.method === 'POST') {

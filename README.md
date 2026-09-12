@@ -17,15 +17,16 @@ No `npm install` required — see **Why zero dependencies** below.
 
 Optional environment variables (create a `.env`-style export before `npm start`, or set in your shell):
 
-- `GEMINI_API_KEY` — when set, the Nudge, Lookbook, and Squad Sync agents call Gemini (`gemini-2.0-flash`) live for text generation. Without it, every agent falls back to a curated template bank, so the app is fully functional offline/out of the box.
-- `INFLUENCER_API_KEY` — placeholder hook for a real social provider (see Influencer Inspo below). Not required to demo the feature.
+- `GEMINI_API_KEY` — when set, the Nudge, Lookbook, and Squad Sync agents call Gemini (`gemini-2.0-flash`) live for text generation, and the Lookbook's "Generate real video (Veo)" button becomes usable (see below). Without it, every agent falls back to a curated template bank, so the app is fully functional offline/out of the box. Get a key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey) — Veo video generation specifically needs a key with Veo access/billing enabled, which is separate from basic Gemini text access.
+- `VEO_MODEL` — optional, defaults to `veo-2.0-generate-001`. Override if Google renames/versions the model.
+- `INSTAGRAM_ACCESS_TOKEN` and `INSTAGRAM_BUSINESS_ID` — when both are set, Influencer Inspo pulls real posts via Instagram's [Business Discovery API](https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/business-discovery-api) instead of mock data. `INSTAGRAM_BUSINESS_ID` is the id of *your own* linked Instagram Business/Creator account (from a Meta developer app); `INSTAGRAM_ACCESS_TOKEN` is a long-lived token for that account with `instagram_business_basic`. The handle you look up must also be a public Business/Creator account — personal accounts aren't discoverable this way.
 - `PORT` — defaults to `8787`.
 
 ## Feature tour
 
 1. **Shared Closet with Detailed Specs** — filter by Maya's / Liam's / Sophie's / All Group Pool. Every piece carries Size, Fabric, and Brand. One tap flips Laundry Status between Fresh and In Hamper. Maya's Camel Trench Coat is pre-claimed by Liam on load, exactly to demonstrate #2 below.
 2. **Real-Time Borrowing & Visual Grey-Out** — claiming a pool item greys out its photo and stamps a bold `TAKEN BY [NAME]` banner across it, live for every open tab (via Server-Sent Events). "Nudge" asks the Nudge Agent to draft a witty, non-passive-aggressive return-reminder text.
-3. **"Same Fit, Different Member" AI Video Lookbook** — "Curate My Outfit" pulls a complementary set from the pool. "Watch AI Video Runway" plays an animated motion-runway simulation (CSS/SVG) that rescales per member height (Maya 5'5" S, Liam 6'1" L, Sophie 5'8" M) with tailored micro-styling tips per perspective, plus an exportable cinematic 4K prompt ready to paste into Google Veo.
+3. **"Same Fit, Different Member" AI Video Lookbook** — "Curate My Outfit" pulls a complementary set from the pool. "Watch AI Video Runway" plays an animated motion-runway simulation (CSS/SVG) that rescales per member height (Maya 5'5" S, Liam 6'1" L, Sophie 5'8" M) with tailored micro-styling tips per perspective, plus an exportable cinematic 4K prompt — and a "Generate real video (Veo)" button that actually renders it with Google's Veo model when `GEMINI_API_KEY` has video access (see below).
 4. **Live WebRTC Video & Audio Fitting Room** — the top-right "Fitting Room Call" button opens a native, browser-only peer-to-peer video call (no external call service). Open a second tab and join to connect both feeds. Fit Check reactions (🔥 Fire / 💅 Slay / 👟 Swap Shoes / 🙅 Hard Pass) burst floating emoji across every connected tab and move a shared live approval gauge.
 5. **Squad Sync & Closet Swap Roulette** — name an event and the Squad Sync Agent assigns Maya, Liam & Sophie complementary color roles from one palette. Swap Roulette spins one fusion "dare" piece per sibling from someone else's closet.
 6. **Multi-agent architecture** — see **AI Agents** in the app, or `server/agents/`. Each agent owns exactly one job: `nudgeAgent`, `lookbookAgent`, `squadSyncAgent`, `rouletteAgent`, `votingAgent`, `influencerAgent`. `orchestrator.js` is the roster/registry every route reads from.
@@ -61,8 +62,8 @@ This environment's `npm install` is blocked by organization egress policy (the n
 ## What's simulated vs. real
 
 - **WebRTC video/audio calling is real** — genuine peer-to-peer `RTCPeerConnection`s, tested with two live browser contexts exchanging actual media tracks.
-- **The AI Video Lookbook "runway" is a CSS motion simulation**, not a generated video — there's no Veo API access wired up in this environment. What *is* real is the cinematic 4K prompt text generator, built to be pasted straight into Veo (or Sora, Runway, etc.) when you're ready to render.
-- **Influencer posts are deterministic mock data**, seeded per handle, with an explicit 3-month filter applied — the same filter a real feed would need. `influencerAgent.fetchFromProvider()` is the single integration point: swap in Instagram Graph API / a licensed scraping provider behind `INFLUENCER_API_KEY` and the rest of the pipeline (filtering, rendering, "not older than 3 months") doesn't change.
+- **The "Watch AI Video Runway" animation is a CSS motion simulation**, always available with no setup. Right next to it, **"Generate real video (Veo)" calls the actual Gemini API's Veo video-generation endpoint** (`geminiClient.generateVideo`) when `GEMINI_API_KEY` is set: it submits the same cinematic prompt as a long-running job, polls until it finishes (up to ~6 minutes), downloads the resulting MP4, and plays it in the page. This integration is **unverified against a live key** — this environment has none to test with — so if Google has changed the request/response shape since this was written, check [ai.google.dev/gemini-api/docs/video](https://ai.google.dev/gemini-api/docs/video) and adjust `geminiClient.js`. Errors (missing key, no Veo access, timeout) surface directly in the UI rather than failing silently.
+- **Influencer posts are real when `INSTAGRAM_ACCESS_TOKEN` + `INSTAGRAM_BUSINESS_ID` are set** — `influencerAgent.fetchFromProvider()` calls Instagram's Business Discovery API and maps real captions, timestamps, like counts, and post images into the UI. Without those two variables it falls back to deterministic mock data (same 3-month filter either way), so the feature is always demoable.
 - **Gemini text generation is real when `GEMINI_API_KEY` is set**, and degrades to hand-written templates otherwise — every agent was designed to be fully demoable without any key.
 
 ## Testing performed
@@ -74,5 +75,6 @@ This environment's `npm install` is blocked by organization egress policy (the n
 
 - Swap the in-memory store for a real database (closet items and votes currently reset on server restart).
 - Add authentication so "claim as…" isn't a free-for-all dropdown.
-- Wire a real Veo/Sora API call behind the existing prompt builder once you have video-model access from this environment.
-- Implement `influencerAgent.fetchFromProvider()` against Instagram Graph API (requires app review) or a licensed provider.
+- Verify the Veo integration against a real, Veo-enabled `GEMINI_API_KEY` and adjust `geminiClient.generateVideo()` if Google's request/response shape has moved on.
+- The Instagram Business Discovery integration needs a Meta developer app review for production use beyond your own test accounts — see Meta's app review docs before shipping this to real users.
+- `public/generated/` accumulates one MP4 per Veo request with no cleanup — add expiry/pruning before running this for real.

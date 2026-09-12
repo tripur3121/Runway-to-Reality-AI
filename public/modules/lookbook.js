@@ -67,6 +67,28 @@ export function initLookbook() {
       document.execCommand('copy');
     }
   });
+
+  document.getElementById('generate-video-btn').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    const status = document.getElementById('video-status');
+    const video = document.getElementById('generated-video');
+    const prompt = document.getElementById('veo-prompt').value;
+    if (!prompt) return;
+    btn.disabled = true;
+    video.classList.add('hidden');
+    status.classList.remove('hidden');
+    status.textContent = 'Generating with Veo — this can take a few minutes…';
+    try {
+      const { videoUrl } = await api.generateVideo(prompt);
+      video.src = videoUrl;
+      video.classList.remove('hidden');
+      status.textContent = 'Done — real Veo-generated video below.';
+    } catch (err) {
+      status.textContent = `Couldn't generate a real video: ${err.message}`;
+    } finally {
+      btn.disabled = false;
+    }
+  });
 }
 
 export function applyLookbookResult(result) {

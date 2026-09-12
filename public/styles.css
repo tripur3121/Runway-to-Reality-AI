@@ -230,6 +230,8 @@ h2 { margin-top: 0; }
 .styling-tip { margin-top: 14px; font-style: italic; }
 .veo-export { margin-top: 14px; }
 .veo-export textarea { width: 100%; min-height: 90px; margin: 8px 0; border-radius: 10px; border: 1px solid var(--line); padding: 10px; font-size: 0.8rem; }
+.veo-export .btn { margin-top: 8px; }
+#generated-video { width: 100%; margin-top: 10px; border-radius: 10px; background: #111; }
 
 .inline-form { display: flex; gap: 8px; margin: 14px 0; }
 .inline-form input {

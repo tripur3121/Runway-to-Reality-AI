@@ -46,17 +46,23 @@ async function selectHandle(handle) {
   const note = document.createElement('p');
   note.className = 'muted small';
   note.style.gridColumn = '1 / -1';
-  note.textContent = `${result.withinThreeMonths} of ${result.totalFetched} posts fall within the last 3 months (source: ${result.source === 'live' ? 'live feed' : 'demo data — connect INFLUENCER_API_KEY for live posts'}).`;
+  note.textContent = `${result.withinThreeMonths} of ${result.totalFetched} posts fall within the last 3 months (source: ${result.source === 'live' ? 'live Instagram feed' : 'demo data — set INSTAGRAM_ACCESS_TOKEN and INSTAGRAM_BUSINESS_ID for live posts'}).`;
   grid.appendChild(note);
   for (const post of result.posts) {
     const card = document.createElement('div');
     card.className = 'inspo-card';
     const daysAgo = Math.round((Date.now() - new Date(post.date).getTime()) / 86400000);
+    const swatch = post.mediaUrl
+      ? `<div class="inspo-swatch" style="background-image:url('${post.mediaUrl}');background-size:cover;background-position:center;"></div>`
+      : `<div class="inspo-swatch" style="background:${post.swatch}"></div>`;
+    const caption = post.permalink
+      ? `<p><a href="${post.permalink}" target="_blank" rel="noopener noreferrer">${post.caption}</a></p>`
+      : `<p>${post.caption}</p>`;
     card.innerHTML = `
-      <div class="inspo-swatch" style="background:${post.swatch}"></div>
+      ${swatch}
       <div class="inspo-body">
         <span class="tag">${post.styleTag}</span>
-        <p>${post.caption}</p>
+        ${caption}
         <span class="meta">${daysAgo}d ago · ${post.likes.toLocaleString()} likes</span>
       </div>
     `;
