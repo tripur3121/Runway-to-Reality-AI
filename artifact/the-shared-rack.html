@@ -40,25 +40,20 @@ button{font-family:inherit;}
 @media (prefers-reduced-motion:reduce){ *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;} }
 
 .masthead{
-  display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
-  padding-block:24px 16px; border-bottom:1px solid var(--line); flex-wrap:wrap;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding-block:20px; border-bottom:1px solid var(--line); flex-wrap:wrap;
 }
 .mast-left{display:flex; align-items:center; gap:14px;}
 .mark{
-  width:46px;height:58px; background:var(--surface); border:1px solid var(--line); border-radius:3px 3px 9px 9px;
+  width:40px;height:50px; background:var(--surface); border:1px solid var(--line); border-radius:3px 3px 9px 9px;
   position:relative; box-shadow:var(--shadow); flex-shrink:0;
 }
-.mark::before{content:'';position:absolute; top:8px; left:50%; transform:translateX(-50%); width:8px;height:8px;border-radius:50%; background:var(--bg); border:1px solid var(--line);}
-.mark::after{content:'';position:absolute; top:22px; left:6px; right:6px; height:2px; background:linear-gradient(90deg,var(--maya),var(--liam) 50%,var(--sophie));}
-h1{font-size:1.5rem; font-weight:700; letter-spacing:-0.01em;}
+.mark::before{content:'';position:absolute; top:7px; left:50%; transform:translateX(-50%); width:7px;height:7px;border-radius:50%; background:var(--bg); border:1px solid var(--line);}
+.mark::after{content:'';position:absolute; top:19px; left:5px; right:5px; height:2px; background:linear-gradient(90deg,var(--maya),var(--liam) 50%,var(--sophie));}
+h1{font-size:1.28rem; font-weight:700; letter-spacing:-0.01em;}
 .eyebrow{font-family:'Space Mono',monospace; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); margin:0 0 2px;}
-.tagline{margin:3px 0 0; color:var(--ink-soft); font-size:0.88rem; max-width:46ch;}
-.mast-right{display:flex; flex-direction:column; align-items:flex-end; gap:10px;}
-.presence-pill{
-  font-family:'Space Mono',monospace; font-size:0.72rem; color:var(--ink-soft);
-  display:flex; align-items:center; gap:6px;
-}
-.presence-dot{width:7px;height:7px;border-radius:50%; background:var(--fresh); box-shadow:0 0 0 3px var(--accent-soft);}
+.mast-right{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.presence-dot{width:7px;height:7px;border-radius:50%; background:var(--fresh); box-shadow:0 0 0 3px var(--accent-soft); flex-shrink:0;}
 .btn{
   border:1px solid transparent; border-radius:999px; padding:10px 18px; font-size:0.86rem; font-weight:600;
   cursor:pointer; transition:transform .12s ease; font-family:'Archivo',sans-serif;
@@ -70,28 +65,57 @@ h1{font-size:1.5rem; font-weight:700; letter-spacing:-0.01em;}
 .btn-outline{background:transparent; color:var(--ink); border-color:var(--line);}
 .btn-danger{background:var(--stamp); color:#fff;}
 .btn-sm{padding:6px 12px; font-size:0.76rem;}
+.btn-lg{padding:14px 26px; font-size:0.98rem;}
 
-.identity-row{display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding-block:12px; border-bottom:1px solid var(--line);}
-.identity-label{font-family:'Space Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-soft); margin-right:2px;}
-.id-chip{
-  border:1px solid var(--line); background:var(--surface); border-radius:999px; padding:6px 14px 6px 10px;
-  cursor:pointer; font-weight:600; font-size:0.82rem; display:flex; align-items:center; gap:6px;
+.identity-wrap,.menu-wrap{position:relative;}
+.identity-pill{
+  border:1px solid var(--line); background:var(--surface); border-radius:999px; padding:8px 14px 8px 10px;
+  cursor:pointer; font-weight:600; font-size:0.82rem; display:flex; align-items:center; gap:7px; color:var(--ink);
 }
-.id-chip .dot{width:9px;height:9px;border-radius:50%;}
-.id-chip.active{border-color:var(--accent); background:var(--accent-soft);}
-
-.punch-tabs{display:flex; gap:4px; padding-block:12px; overflow-x:auto; border-bottom:1px solid var(--line);}
-.punch-tab{
-  border:none; background:transparent; padding:8px 14px; border-radius:6px; font-weight:600; font-size:0.86rem;
-  color:var(--ink-soft); cursor:pointer; white-space:nowrap; position:relative;
+.identity-pill .dot{width:9px;height:9px;border-radius:50%; flex-shrink:0; background:var(--ink-soft);}
+.menu-btn{
+  border:1px solid var(--line); background:var(--surface); border-radius:999px; padding:10px 16px;
+  cursor:pointer; font-weight:600; font-size:0.86rem; color:var(--ink);
 }
-.punch-tab.active{color:var(--ink);}
-.punch-tab.active::after{content:'';position:absolute; left:12px; right:12px; bottom:-13px; height:3px; background:var(--accent); border-radius:2px;}
+.popover{
+  position:absolute; top:calc(100% + 8px); right:0; background:var(--surface); border:1px solid var(--line);
+  border-radius:12px; box-shadow:var(--shadow); padding:6px; z-index:60; min-width:190px;
+}
+.menu-panel{min-width:270px;}
+.popover-item{
+  display:flex; align-items:center; gap:9px; width:100%; text-align:left; border:none; background:none;
+  padding:9px 10px; border-radius:8px; cursor:pointer; font-family:inherit; font-size:0.86rem; color:var(--ink);
+}
+.popover-item:hover{background:var(--surface-2);}
+.popover-item .dot{width:9px;height:9px;border-radius:50%; flex-shrink:0;}
+.menu-item{display:flex; align-items:flex-start; gap:10px; width:100%; text-align:left; border:none; background:none; padding:10px; border-radius:9px; cursor:pointer; font-family:inherit; color:var(--ink);}
+.menu-item:hover{background:var(--surface-2);}
+.menu-icon{font-size:1.15rem; line-height:1.3;}
+.menu-item b{display:block; font-size:0.87rem;}
+.menu-item small{color:var(--ink-soft); font-size:0.76rem;}
 
-main{padding-block:28px 72px;}
+.back-link{border:none; background:none; cursor:pointer; color:var(--ink-soft); font-weight:600; font-size:0.82rem; padding:0; margin-bottom:18px; display:inline-flex; align-items:center; gap:5px;}
+.back-link:hover{color:var(--accent);}
+
+main{padding-block:32px 72px;}
 .view{display:none;}
 .view.active{display:block; animation:fade .2s ease;}
 @keyframes fade{from{opacity:0; transform:translateY(3px);} to{opacity:1;}}
+
+.hero{display:grid; grid-template-columns:1.15fr 0.85fr; gap:32px; align-items:center;}
+@media (max-width:800px){.hero{grid-template-columns:1fr;}}
+.hero-title{font-size:clamp(2rem,4vw,2.7rem); line-height:1.06; margin:8px 0 12px;}
+.hero-sub{color:var(--ink-soft); max-width:50ch; font-size:1rem; margin:0 0 22px;}
+.hero-stats{display:flex; gap:24px; margin-bottom:26px; flex-wrap:wrap;}
+.stat b{display:block; font-family:'Space Mono',monospace; font-size:1.5rem; font-variant-numeric:tabular-nums; line-height:1;}
+.stat span{font-size:0.7rem; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.06em;}
+.hero-cta-row{display:flex; gap:10px; flex-wrap:wrap;}
+.hero-visual{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px; box-shadow:var(--shadow);}
+.hero-visual-caption{display:flex; align-items:center; gap:6px; margin:10px 2px 0; font-family:'Space Mono',monospace; font-size:0.72rem; color:var(--ink-soft);}
+.hero-visual .runway-figure{background:linear-gradient(180deg,var(--accent),color-mix(in srgb, var(--accent) 55%, transparent));}
+
+.lookbook-result{margin-top:40px; padding-top:30px; border-top:1px dashed var(--line);}
+.lookbook-result h3{margin-bottom:16px; font-size:1.2rem;}
 
 .section-head{margin-bottom:18px; display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap;}
 .section-head h2{font-size:1.5rem;}
@@ -129,10 +153,8 @@ main{padding-block:28px 72px;}
 .tag-actions{margin-top:auto; padding-top:10px; display:flex; gap:6px; flex-wrap:wrap;}
 .tag-actions .btn{flex:1;}
 
-.empty-state{border:1px dashed var(--line); border-radius:12px; padding:40px 20px; text-align:center; color:var(--ink-soft);}
 .hidden{display:none !important;}
 
-.curate-row{display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:20px;}
 .lookbook-grid{display:grid; grid-template-columns:1fr 1.15fr; gap:22px;}
 @media (max-width:820px){.lookbook-grid{grid-template-columns:1fr;}}
 .piece-row{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:11px 13px; display:flex; gap:10px; align-items:center; margin-bottom:9px; box-shadow:var(--shadow);}
@@ -211,30 +233,78 @@ main{padding-block:28px 72px;}
     <div>
       <p class="eyebrow">Maya · Liam · Sophie</p>
       <h1>The Shared Rack</h1>
-      <p class="tagline">Plan tomorrow's fit tonight — one tap, zero effort, still styled.</p>
     </div>
   </div>
   <div class="mast-right">
-    <span class="presence-pill" id="presence-pill"><span class="presence-dot"></span><span id="presence-text">Just you, for now</span></span>
+    <div class="identity-wrap">
+      <button class="identity-pill" id="identity-pill"><span class="dot" id="identity-pill-dot"></span><span id="identity-pill-label">Set who's shopping</span></button>
+      <div class="popover hidden" id="identity-popover"></div>
+    </div>
     <button class="btn btn-accent" id="fitting-room-btn">🎥 Fitting Room Call</button>
+    <div class="menu-wrap">
+      <button class="menu-btn" id="menu-btn" aria-haspopup="true" aria-expanded="false">☰ Explore</button>
+      <div class="popover menu-panel hidden" id="menu-panel">
+        <button class="menu-item" data-view="closet"><span class="menu-icon">🏷️</span><span><b>Shared Closet</b><br><small>Browse, claim &amp; toggle laundry</small></span></button>
+        <button class="menu-item" data-view="squadsync"><span class="menu-icon">🎨</span><span><b>Squad Sync</b><br><small>Coordinate colors for an event</small></span></button>
+        <button class="menu-item" data-view="roulette"><span class="menu-icon">🎡</span><span><b>Swap Roulette</b><br><small>Spin for a fusion dare look</small></span></button>
+        <button class="menu-item" data-view="inspo"><span class="menu-icon">📌</span><span><b>Influencer Inspo</b><br><small>Last 3 months from your favorites</small></span></button>
+        <button class="menu-item" data-view="agents"><span class="menu-icon">🤖</span><span><b>AI Agents</b><br><small>Meet the crew behind this app</small></span></button>
+      </div>
+    </div>
   </div>
 </header>
 
-<div class="identity-row" id="identity-row">
-  <span class="identity-label">Shopping as</span>
-</div>
-
-<nav class="punch-tabs" id="tabs">
-  <button class="punch-tab active" data-tab="closet">Shared Closet</button>
-  <button class="punch-tab" data-tab="lookbook">Plan Tomorrow's Fit</button>
-  <button class="punch-tab" data-tab="squadsync">Squad Sync</button>
-  <button class="punch-tab" data-tab="roulette">Swap Roulette</button>
-  <button class="punch-tab" data-tab="inspo">Influencer Inspo</button>
-  <button class="punch-tab" data-tab="agents">AI Agents</button>
-</nav>
-
 <main>
-  <section class="view active" id="view-closet">
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <div class="hero-content">
+        <p class="eyebrow">ONE TAP, TOMORROW SORTED</p>
+        <h2 class="hero-title">Plan tomorrow's fit</h2>
+        <p class="hero-sub">Tap once — the Lookbook Agent pulls a complementary outfit from the shared pool and tells you exactly how to wear it, tonight.</p>
+        <div class="hero-stats" id="hero-stats"></div>
+        <div class="hero-cta-row">
+          <button class="btn btn-accent btn-lg" id="curate-btn">✨ Curate My Outfit</button>
+          <button class="btn btn-outline" id="browse-closet-link">Browse the closet →</button>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="runway-stage" id="hero-stage">
+          <div class="runway-floor"></div>
+          <div class="runway-figure"></div>
+        </div>
+        <p class="hero-visual-caption"><span class="presence-dot"></span><span id="presence-text">Just you, for now</span></p>
+      </div>
+    </div>
+
+    <div class="lookbook-result hidden" id="lookbook-content">
+      <h3>Tonight's outfit</h3>
+      <div class="lookbook-grid">
+        <div id="outfit-pieces"></div>
+        <div class="runway-card">
+          <div class="perspective-row" id="perspective-switch">
+            <button class="chip active" data-member="maya">Maya · 5'5" S</button>
+            <button class="chip" data-member="liam">Liam · 6'1" L</button>
+            <button class="chip" data-member="sophie">Sophie · 5'8" M</button>
+          </div>
+          <button class="btn btn-outline" id="watch-video-btn">▶ Watch AI Video Runway</button>
+          <div class="runway-stage hidden" id="runway-stage">
+            <div class="runway-floor"></div>
+            <div class="runway-figure" id="runway-figure"></div>
+          </div>
+          <p class="tip-line" id="styling-tip"></p>
+          <p class="ai-tag" id="tip-source"></p>
+          <details class="veo-details">
+            <summary>Exportable 4K Veo prompt</summary>
+            <textarea id="veo-prompt" readonly></textarea>
+            <button class="btn btn-ghost btn-sm" id="copy-veo-btn">Copy prompt</button>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-closet">
+    <button class="back-link" data-back>← Today's Fit</button>
     <div class="section-head">
       <div>
         <h2>Shared Closet</h2>
@@ -250,40 +320,8 @@ main{padding-block:28px 72px;}
     <div class="rack" id="closet-grid"></div>
   </section>
 
-  <section class="view" id="view-lookbook">
-    <div class="curate-row">
-      <div>
-        <h2>Plan Tomorrow's Fit</h2>
-        <p class="muted">One tap curates an outfit from the shared pool — with styling notes for whoever ends up wearing it.</p>
-      </div>
-      <button class="btn btn-accent" id="curate-btn">✨ Curate My Outfit</button>
-    </div>
-    <div class="empty-state" id="lookbook-empty">No outfit curated yet — tap "Curate My Outfit" to get started.</div>
-    <div class="lookbook-grid hidden" id="lookbook-content">
-      <div id="outfit-pieces"></div>
-      <div class="runway-card">
-        <div class="perspective-row" id="perspective-switch">
-          <button class="chip active" data-member="maya">Maya · 5'5" S</button>
-          <button class="chip" data-member="liam">Liam · 6'1" L</button>
-          <button class="chip" data-member="sophie">Sophie · 5'8" M</button>
-        </div>
-        <button class="btn btn-outline" id="watch-video-btn">▶ Watch AI Video Runway</button>
-        <div class="runway-stage hidden" id="runway-stage">
-          <div class="runway-floor"></div>
-          <div class="runway-figure" id="runway-figure"></div>
-        </div>
-        <p class="tip-line" id="styling-tip"></p>
-        <p class="ai-tag" id="tip-source"></p>
-        <details class="veo-details">
-          <summary>Exportable 4K Veo prompt</summary>
-          <textarea id="veo-prompt" readonly></textarea>
-          <button class="btn btn-ghost btn-sm" id="copy-veo-btn">Copy prompt</button>
-        </details>
-      </div>
-    </div>
-  </section>
-
   <section class="view" id="view-squadsync">
+    <button class="back-link" data-back>← Today's Fit</button>
     <div class="section-head">
       <div>
         <h2>Squad Sync</h2>
@@ -298,6 +336,7 @@ main{padding-block:28px 72px;}
   </section>
 
   <section class="view" id="view-roulette">
+    <button class="back-link" data-back>← Today's Fit</button>
     <div class="section-head">
       <div>
         <h2>Closet Swap Roulette</h2>
@@ -309,6 +348,7 @@ main{padding-block:28px 72px;}
   </section>
 
   <section class="view" id="view-inspo">
+    <button class="back-link" data-back>← Today's Fit</button>
     <div class="section-head">
       <div>
         <h2>Influencer Inspo</h2>
@@ -324,6 +364,7 @@ main{padding-block:28px 72px;}
   </section>
 
   <section class="view" id="view-agents">
+    <button class="back-link" data-back>← Today's Fit</button>
     <div class="section-head">
       <div>
         <h2>Meet the Agents</h2>
@@ -504,7 +545,6 @@ function subscribeDb(){
   db.collection('votes').orderBy('at','desc').limit(300).onSnapshot((snap) => { state.votesLog = snap.docs.map(d => d.data()); updateGauge(); });
 }
 
-let myPeerLabel = null;
 function myPeerRef(){ return room ? room.peers().find(p => p.isMe && p.sameTab) : null; }
 function setupRoom(){
   room.onPeers((change) => { renderPresence(change.peers); if (joined) maybeStartCall(); });
@@ -518,19 +558,26 @@ function renderPresence(peers){
 
 // ---- identity ----
 function renderIdentity(){
-  const row = $('identity-row');
-  row.querySelectorAll('.id-chip').forEach(c => c.remove());
+  const pop = $('identity-popover'); pop.innerHTML = '';
   for (const m of MEMBERS) {
-    const chip = document.createElement('button');
-    chip.className = `id-chip${state.myIdentity === m.id ? ' active' : ''}`;
-    chip.innerHTML = `<span class="dot" style="background:${m.color}"></span>${m.name}`;
-    chip.addEventListener('click', () => {
+    const item = document.createElement('button');
+    item.className = 'popover-item';
+    item.innerHTML = `<span class="dot" style="background:${m.color}"></span>${m.name}`;
+    item.addEventListener('click', () => {
       state.myIdentity = m.id;
       localStorage.setItem('rack-identity', m.id);
-      renderIdentity(); renderCloset();
+      renderIdentity(); renderCloset(); closePopovers();
       if (room) room.presence({ name: m.id }).catch(() => {});
     });
-    row.appendChild(chip);
+    pop.appendChild(item);
+  }
+  if (state.myIdentity) {
+    const m = memberById(state.myIdentity);
+    $('identity-pill-label').textContent = m.name;
+    $('identity-pill-dot').style.background = m.color;
+  } else {
+    $('identity-pill-label').textContent = "Set who's shopping";
+    $('identity-pill-dot').style.background = 'var(--ink-soft)';
   }
 }
 
@@ -607,10 +654,21 @@ function renderCloset(){
   const visible = state.filter === 'all' ? state.items.filter(i => i.pool) : state.items.filter(i => i.ownerId === state.filter);
   for (const item of visible) grid.appendChild(itemCard(item));
   if (!visible.length) grid.innerHTML = '<p class="muted">Nothing here yet.</p>';
+  renderHeroStats();
+}
+function renderHeroStats(){
+  const fresh = state.items.filter(i => i.laundry === 'fresh').length;
+  const hamper = state.items.filter(i => i.laundry === 'hamper').length;
+  const borrowed = state.items.filter(i => i.claimedBy).length;
+  $('hero-stats').innerHTML = `
+    <div class="stat"><b>${fresh}</b><span>Fresh</span></div>
+    <div class="stat"><b>${hamper}</b><span>In hamper</span></div>
+    <div class="stat"><b>${borrowed}</b><span>With a roommate</span></div>
+  `;
 }
 
 async function claimItem(item){
-  if (!state.myIdentity) { toast('Pick who you are shopping as, first.'); return; }
+  if (!state.myIdentity) { toast('Pick who you are shopping as, first.'); togglePopover('identity-popover'); return; }
   if (db) { try { await db.doc('items/' + item.id).update({ claimedBy: state.myIdentity }); } catch (e) { toast('Could not claim right now.'); } }
   else { item.claimedBy = state.myIdentity; renderCloset(); }
   toast(`${memberById(state.myIdentity).name} claimed the ${item.name}`);
@@ -679,7 +737,6 @@ async function curateLookbook(){
 
 function renderLookbook(){
   const r = state.lookbook; if (!r) return;
-  $('lookbook-empty').classList.add('hidden');
   $('lookbook-content').classList.remove('hidden');
   const wrap = $('outfit-pieces'); wrap.innerHTML = '';
   const outfit = r.outfitIds.map(id => state.items.find(i => i.id === id)).filter(Boolean);
@@ -890,18 +947,35 @@ async function leaveCall(){
 function toggleMic(){ if (!localStream) return; micOn = !micOn; localStream.getAudioTracks().forEach(t => t.enabled = micOn); $('mute-btn').textContent = micOn ? 'Mute' : 'Unmute'; }
 function toggleCam(){ if (!localStream) return; camOn = !camOn; localStream.getVideoTracks().forEach(t => t.enabled = camOn); $('cam-btn').textContent = camOn ? 'Camera Off' : 'Camera On'; }
 
-// ---- modals & tabs ----
+// ---- modals, popovers & view routing ----
 function openModal(id){ $(id).classList.remove('hidden'); }
 function closeModal(id){ $(id).classList.add('hidden'); if (id === 'fitting-room-modal') leaveCall(); }
 
-function initTabs(){
-  $('tabs').addEventListener('click', (e) => {
-    const btn = e.target.closest('.punch-tab'); if (!btn) return;
-    document.querySelectorAll('.punch-tab').forEach(t => t.classList.toggle('active', t === btn));
-    document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === `view-${btn.dataset.tab}`));
-  });
+function closePopovers(){
+  $('identity-popover').classList.add('hidden');
+  $('menu-panel').classList.add('hidden');
+  $('menu-btn').setAttribute('aria-expanded', 'false');
 }
+function togglePopover(id){
+  const el = $(id);
+  const willOpen = el.classList.contains('hidden');
+  closePopovers();
+  if (willOpen) el.classList.remove('hidden');
+  if (id === 'menu-panel') $('menu-btn').setAttribute('aria-expanded', String(willOpen));
+}
+function switchView(name){
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === `view-${name}`));
+}
+
 function initEvents(){
+  $('identity-pill').addEventListener('click', (e) => { e.stopPropagation(); togglePopover('identity-popover'); });
+  $('menu-btn').addEventListener('click', (e) => { e.stopPropagation(); togglePopover('menu-panel'); });
+  $('menu-panel').addEventListener('click', (e) => { const item = e.target.closest('.menu-item'); if (!item) return; switchView(item.dataset.view); closePopovers(); });
+  document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => switchView('home')));
+  document.addEventListener('click', (e) => { if (!e.target.closest('.identity-wrap') && !e.target.closest('.menu-wrap')) closePopovers(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePopovers(); });
+
+  $('browse-closet-link').addEventListener('click', () => switchView('closet'));
   $('member-filter').addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (!b) return; state.filter = b.dataset.member; document.querySelectorAll('#member-filter .chip').forEach(c => c.classList.toggle('active', c === b)); renderCloset(); });
   $('curate-btn').addEventListener('click', curateLookbook);
   $('perspective-switch').addEventListener('click', (e) => { const c = e.target.closest('.chip'); if (c) applyPerspective(c.dataset.member); });
@@ -929,7 +1003,7 @@ function renderAgents(){
 }
 
 function boot(){
-  initTabs(); initEvents(); renderIdentity(); renderCloset(); renderAgents();
+  initEvents(); renderIdentity(); renderCloset(); renderAgents();
   initCapabilities().then(renderAgents);
 }
 boot();
