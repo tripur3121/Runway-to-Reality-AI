@@ -1,36 +1,36 @@
-<title>The Shared Rack</title>
+<title>DripShare</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
 <style>
 :root{
-  --bg:#F2EEE3; --surface:#FBF9F3; --surface-2:#EFEADD; --ink:#221E19; --ink-soft:#786F62;
-  --line:#DBD3C2; --accent:#2F6F5E; --accent-soft:#DEEAE4; --accent-ink:#F5FBF8;
-  --stamp:#B23A2E; --fresh:#3E7D3A; --hamper:#AD7A0C;
-  --maya:#B5647A; --liam:#3E6E8E; --sophie:#B9812C;
-  --shadow:0 1px 2px rgba(34,30,25,0.06),0 6px 16px rgba(34,30,25,0.06);
+  --bg:#F6F6F2; --surface:#FFFFFF; --surface-2:#EFEFE9; --ink:#141414; --ink-soft:#6E6B64;
+  --line:#E2E0D8; --accent:#F2A400; --accent-soft:#FBECC4; --accent-ink:#141414;
+  --stamp:#D23B2E; --fresh:#2E8B57; --hamper:#9C6B2E;
+  --maya:#E0447A; --liam:#2E6FF2; --sophie:#1FA187;
+  --shadow:0 1px 2px rgba(20,20,20,0.06),0 6px 16px rgba(20,20,20,0.07);
   color-scheme:light dark;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#171310; --surface:#221D18; --surface-2:#2A231D; --ink:#F1EBDF; --ink-soft:#B3A79A;
-    --line:#3C342A; --accent:#54AC93; --accent-soft:rgba(84,172,147,0.16); --accent-ink:#0E1A16;
-    --stamp:#E2685A; --fresh:#7BC66E; --hamper:#E0AC4B;
-    --maya:#DE8AA4; --liam:#7FB1D6; --sophie:#DDA857;
-    --shadow:0 1px 2px rgba(0,0,0,0.3),0 10px 24px rgba(0,0,0,0.35);
+    --bg:#0E0E0E; --surface:#1B1B1B; --surface-2:#252525; --ink:#F5F4EF; --ink-soft:#A6A29A;
+    --line:#333330; --accent:#FFC933; --accent-soft:rgba(255,201,51,0.16); --accent-ink:#141414;
+    --stamp:#FF6B5B; --fresh:#4CC98A; --hamper:#E0A83E;
+    --maya:#F06BA0; --liam:#6FA0FF; --sophie:#3FCDAF;
+    --shadow:0 1px 2px rgba(0,0,0,0.35),0 10px 24px rgba(0,0,0,0.4);
   }
 }
 :root[data-theme="dark"]{
-  --bg:#171310; --surface:#221D18; --surface-2:#2A231D; --ink:#F1EBDF; --ink-soft:#B3A79A;
-  --line:#3C342A; --accent:#54AC93; --accent-soft:rgba(84,172,147,0.16); --accent-ink:#0E1A16;
-  --stamp:#E2685A; --fresh:#7BC66E; --hamper:#E0AC4B;
-  --maya:#DE8AA4; --liam:#7FB1D6; --sophie:#DDA857;
-  --shadow:0 1px 2px rgba(0,0,0,0.3),0 10px 24px rgba(0,0,0,0.35);
+  --bg:#0E0E0E; --surface:#1B1B1B; --surface-2:#252525; --ink:#F5F4EF; --ink-soft:#A6A29A;
+  --line:#333330; --accent:#FFC933; --accent-soft:rgba(255,201,51,0.16); --accent-ink:#141414;
+  --stamp:#FF6B5B; --fresh:#4CC98A; --hamper:#E0A83E;
+  --maya:#F06BA0; --liam:#6FA0FF; --sophie:#3FCDAF;
+  --shadow:0 1px 2px rgba(0,0,0,0.35),0 10px 24px rgba(0,0,0,0.4);
 }
 *{box-sizing:border-box;}
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:'Archivo',system-ui,-apple-system,sans-serif;
-  padding-inline:max(16px,calc((100vw - 1040px)/2));
+  padding-inline:max(20px,calc((100vw - 1400px)/2));
 }
 h1,h2,h3{font-family:'Fraunces',Georgia,serif; text-wrap:balance; margin:0;}
 .mono{font-family:'Space Mono',ui-monospace,monospace;}
@@ -100,18 +100,20 @@ h1{font-size:1.28rem; font-weight:700; letter-spacing:-0.01em;}
 main{padding-block:32px 72px;}
 .view{display:none;}
 .view.active{display:block; animation:fade .2s ease;}
+#view-home.active{display:flex; flex-direction:column; justify-content:center; min-height:min(60vh,600px);}
 @keyframes fade{from{opacity:0; transform:translateY(3px);} to{opacity:1;}}
 
-.hero{display:grid; grid-template-columns:1.15fr 0.85fr; gap:32px; align-items:center;}
-@media (max-width:800px){.hero{grid-template-columns:1fr;}}
-.hero-title{font-size:clamp(2rem,4vw,2.7rem); line-height:1.06; margin:8px 0 12px;}
-.hero-sub{color:var(--ink-soft); max-width:50ch; font-size:1rem; margin:0 0 22px;}
-.hero-stats{display:flex; gap:24px; margin-bottom:26px; flex-wrap:wrap;}
-.stat b{display:block; font-family:'Space Mono',monospace; font-size:1.5rem; font-variant-numeric:tabular-nums; line-height:1;}
-.stat span{font-size:0.7rem; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.06em;}
-.hero-cta-row{display:flex; gap:10px; flex-wrap:wrap;}
-.hero-visual{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:14px; box-shadow:var(--shadow);}
-.hero-visual-caption{display:flex; align-items:center; gap:6px; margin:10px 2px 0; font-family:'Space Mono',monospace; font-size:0.72rem; color:var(--ink-soft);}
+.hero{display:grid; grid-template-columns:1.1fr 1fr; gap:52px; align-items:center; padding-block:16px 8px;}
+@media (max-width:800px){.hero{grid-template-columns:1fr; gap:28px;}}
+.hero-title{font-size:clamp(2.4rem,4.4vw,3.6rem); line-height:1.04; margin:10px 0 16px;}
+.hero-sub{color:var(--ink-soft); max-width:52ch; font-size:1.08rem; margin:0 0 28px;}
+.hero-stats{display:flex; gap:34px; margin-bottom:30px; flex-wrap:wrap;}
+.stat b{display:block; font-family:'Space Mono',monospace; font-size:1.9rem; font-variant-numeric:tabular-nums; line-height:1;}
+.stat span{font-size:0.72rem; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.06em;}
+.hero-cta-row{display:flex; gap:12px; flex-wrap:wrap;}
+.hero-visual{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:18px; box-shadow:var(--shadow);}
+.hero-visual .runway-stage{height:340px;}
+.hero-visual-caption{display:flex; align-items:center; gap:6px; margin:12px 2px 0; font-family:'Space Mono',monospace; font-size:0.74rem; color:var(--ink-soft);}
 .hero-visual .runway-figure{background:linear-gradient(180deg,var(--accent),color-mix(in srgb, var(--accent) 55%, transparent));}
 
 .lookbook-result{margin-top:40px; padding-top:30px; border-top:1px dashed var(--line);}
@@ -232,7 +234,7 @@ main{padding-block:32px 72px;}
     <div class="mark" aria-hidden="true"></div>
     <div>
       <p class="eyebrow">Maya · Liam · Sophie</p>
-      <h1>The Shared Rack</h1>
+      <h1>DripShare</h1>
     </div>
   </div>
   <div class="mast-right">
@@ -368,7 +370,7 @@ main{padding-block:32px 72px;}
     <div class="section-head">
       <div>
         <h2>Meet the Agents</h2>
-        <p>The Shared Rack runs on a small crew of single-purpose agents, each expert at exactly one job.</p>
+        <p>DripShare runs on a small crew of single-purpose agents, each expert at exactly one job.</p>
       </div>
     </div>
     <div class="agents-grid" id="agents-grid"></div>

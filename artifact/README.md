@@ -1,6 +1,6 @@
-# The Shared Rack (Claude Artifact build)
+# DripShare (Claude Artifact build)
 
-`the-shared-rack.html` is a self-contained, single-file rebuild of Runway to Reality AI as a [Claude Artifact](https://claude.ai/code/artifact/bebf284b-747a-4c57-880e-e1a8d11fc079) — a hosted page with its own shareable link, for when you want a live preview without running a server.
+`the-shared-rack.html` is a self-contained, single-file rebuild of Runway to Reality AI, branded as **DripShare**, as a [Claude Artifact](https://claude.ai/code/artifact/bebf284b-747a-4c57-880e-e1a8d11fc079) — a hosted page with its own shareable link, for when you want a live preview without running a server.
 
 It has no build step and no npm dependencies (same constraint as the main app — see the root `README.md`). Instead of the Node backend in `server/`, it uses three Claude Artifact runtime capabilities in the browser:
 
